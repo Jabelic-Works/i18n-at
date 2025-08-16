@@ -1,0 +1,25 @@
+# Source files
+*.ts
+*.tsx
+!dist/**/*.d.ts
+
+# Config files
+tsup.config.ts
+tsconfig.json
+vitest.config.ts
+
+# Development files
+*.test.*
+*.spec.*
+__tests__/
+coverage/
+
+# Documentation (keep README.md)
+docs/
+examples/
+
+# Misc
+.DS_Store
+node_modules/
+.env*
+*.log
