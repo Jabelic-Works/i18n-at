@@ -1,0 +1,62 @@
+{
+  "name": "i18n-at",
+  "version": "0.1.0",
+  "description": "Type-safe internationalization tool for Next.js App Router with co-location and IDE code jumping",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./client": {
+      "types": "./dist/client.d.ts",
+      "import": "./dist/client.js",
+      "require": "./dist/client.cjs"
+    },
+    "./server": {
+      "types": "./dist/server.d.ts",
+      "import": "./dist/server.js",
+      "require": "./dist/server.cjs"
+    }
+  },
+  "scripts": {
+    "build": "tsup && node postbuild.js",
+    "dev": "tsup --watch",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "i18n",
+    "internationalization",
+    "typescript",
+    "react",
+    "type-safe",
+    "code-jumping",
+    "nextjs"
+  ],
+  "author": "AIS Team",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/i18n-toolkit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/i18n-toolkit/issues"
+  },
+  "homepage": "https://github.com/your-org/i18n-toolkit#readme"
+}
