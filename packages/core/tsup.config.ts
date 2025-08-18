@@ -28,9 +28,9 @@ export default defineConfig([
       options.jsx = "automatic";
     },
   },
-  // Main entry point (server-safe combined)
+  // Main entry point (shared utilities and types)
   {
-    entry: { index: "src/server-only.ts" },
+    entry: { index: "src/index.ts" },
     format: ["cjs", "esm"],
     dts: true,
     clean: false,

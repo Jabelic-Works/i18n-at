@@ -19,9 +19,6 @@ export {
 // === Message Definition ===
 export { defineMessages, at } from "./define-messages";
 
-// === Client-Side ===
-export { LocaleContext, I18nClientProvider } from "./client-provider";
-export { useI18n, useLocale } from "./client";
-
-// === Server-Side ===
-export { getI18n } from "./server";
+// === Environment-specific exports are available via subpaths:
+// - Client: import from "i18n-at/client"
+// - Server: import from "i18n-at/server"
