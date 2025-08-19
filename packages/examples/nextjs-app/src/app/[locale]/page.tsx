@@ -11,8 +11,7 @@ export default async function Page({
   params: Promise<{ locale: AppLocale }>;
 }) {
   const { locale } = await params;
-  const t = getI18n(messages, locale);
-  const m = at(locale, messages); // ← Type-safe & IDE jumping!
+  const { t, m } = getI18n(messages, locale);
 
   return (
     <div className="min-h-screen bg-gray-50">
