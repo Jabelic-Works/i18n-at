@@ -8,8 +8,7 @@ interface NavigationProps {
 }
 
 export default function Navigation({ locale }: NavigationProps) {
-  const t = getI18n(messages, locale);
-  const m = at(locale, messages);
+  const { t, m } = getI18n(messages, locale);
 
   return (
     <nav className="bg-white shadow-sm border-b border-gray-200">

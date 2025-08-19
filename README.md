@@ -49,7 +49,7 @@ export type AppLocale = ExtractConfigLocales<typeof i18nConfig>;
 
 ```typescript
 // app/[locale]/page.tsx
-import { getI18n, at } from "i18n-at";
+import { getI18n } from "i18n-at";
 import { messages } from "./messages";
 
 export default function Page({
@@ -57,8 +57,7 @@ export default function Page({
 }: {
   params: { locale: string };
 }) {
-  const t = getI18n(messages, locale);
-  const m = at(locale, messages); // ← Type-safe & IDE jumping!
+  const { t, m } = getI18n(messages, locale); // Type-safe & IDE jumping!
 
   return (
     <div>
@@ -74,13 +73,12 @@ export default function Page({
 ```typescript
 // components/Dashboard.tsx
 "use client";
-import { useI18n, useLocale } from "@i18n-at";
+import { useI18n, useLocale } from "i18n-at";
 import { messages } from "./messages";
 
 export default function Dashboard() {
-  const { t } = useI18n(messages);
   const locale = useLocale();
-  const m = at(locale, messages); // ← IDE jumping works!
+  const { t, m } = useI18n(messages); // IDE jumping works!
 
   return (
     <div>
@@ -140,20 +138,20 @@ const jaMessages = at("ja", messages); // Type: { hello: string }
 
 #### `getI18n(messages, locale)`
 
-Server-side translation function.
+Server-side translation function that returns both translator and messages.
 
 ```typescript
-const t = getI18n(messages, "en");
-const text = t(enMessages.hello); // "Hello"
+const { t, m } = getI18n(messages, "en");
+const text = t(m.hello); // "Hello" with type safety
 ```
 
 #### `useI18n(messages)`
 
-Client-side translation hook.
+Client-side translation hook that returns both translator and messages.
 
 ```typescript
-const { t } = useI18n(messages);
-const text = t(enMessages.hello); // Translated text
+const { t, m } = useI18n(messages);
+const text = t(m.hello); // Translated text with type safety
 ```
 
 ## 🎯 Why This Library?
@@ -202,6 +200,7 @@ t("dashboard.title"); // ← String literal, error-prone
 - 🛡️ **100% Type-safe**: Full TypeScript support
 - 🧹 **Dead Code Detection**: Unused messages are easily spotted
 - ⚡ **Faster Refactoring**: Change component? Messages move with it
+- 📝 **1-Line Declaration**: `const { t, m } = useI18n(messages)` - Simple & powerful!
 
 ## 🔧 Advanced Usage
 

@@ -1,13 +1,11 @@
 "use client";
 import { useI18n, useLocale } from "i18n-at/client";
-import { at } from "i18n-at";
 import { AppLocale, messages } from "@/messages";
 import { useState } from "react";
 
 export default function Dashboard() {
-  const { t } = useI18n(messages);
   const locale = useLocale<AppLocale>();
-  const m = at(locale, messages); // ← IDE jumping works!
+  const { t, m } = useI18n(messages);
 
   const [isLoading, setIsLoading] = useState(false);
 
