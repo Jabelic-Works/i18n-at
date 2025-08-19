@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
+  "author": "Jabelic",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -40,7 +41,6 @@
     "code-jumping",
     "nextjs"
   ],
-  "author": "AIS Team",
   "license": "MIT",
   "peerDependencies": {
     "react": ">=18.0.0"

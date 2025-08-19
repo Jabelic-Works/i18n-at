@@ -1,8 +1,9 @@
-import { getI18n, at } from "i18n-at";
+import { at } from "i18n-at";
 import { messages, type AppLocale } from "@/messages";
 import Dashboard from "@/components/Dashboard";
 import Navigation from "@/components/Navigation";
 import { I18nClientProvider } from "i18n-at/client";
+import { getI18n } from "i18n-at/server";
 
 export default async function Page({
   params,
