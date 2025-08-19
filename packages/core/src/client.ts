@@ -1,8 +1,9 @@
 "use client";
-import { createContext, useContext } from "react";
-import { MessageNode } from "./types";
+import { useContext } from "react";
+import { MessageNode, Messages } from "./types";
 import { getValueFromPath } from "./utils";
 import { LocaleContext } from "./client-provider";
+import { at } from "./define-messages";
 
 export function useLocale<T extends string>(): T {
   const locale = useContext(LocaleContext);
@@ -13,8 +14,10 @@ export function useLocale<T extends string>(): T {
 }
 
 // 各コンポーネントが独立してmessagesを使用するためのフック
-export function useI18n<T extends Record<string, MessageNode>>(messages: T) {
-  const locale = useLocale();
+export function useI18n<TMessages extends Messages<MessageNode, string>>(
+  messages: TMessages
+) {
+  const locale = useLocale() as keyof TMessages;
 
   const t = (key: string, params?: Record<string, string | number>): string => {
     // keyがオブジェクトの場合は値を抽出
@@ -29,5 +32,7 @@ export function useI18n<T extends Record<string, MessageNode>>(messages: T) {
     return text;
   };
 
-  return { t };
+  const m = at(locale, messages);
+
+  return { t, m };
 }
