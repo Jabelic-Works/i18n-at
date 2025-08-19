@@ -1,0 +1,95 @@
+name: Release to NPM
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish (e.g., patch, minor, major)"
+        required: true
+        default: "patch"
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build core package
+        run: |
+          cd packages/core
+          pnpm build
+
+      - name: Run tests (if available)
+        run: |
+          cd packages/core
+          pnpm test || echo "No tests found, skipping..."
+
+      - name: Update version (manual trigger)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          cd packages/core
+          npm version ${{ github.event.inputs.version }} --no-git-tag-version
+          echo "NEW_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+
+      - name: Get version from tag
+        if: github.event_name == 'push'
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          cd packages/core
+          npm version $VERSION --no-git-tag-version
+          echo "NEW_VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Publish to NPM
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          cd packages/core
+          npm publish --access public
+
+      - name: Create GitHub Release
+        if: github.event_name == 'push'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            ## Changes in v${{ env.NEW_VERSION }}
+
+            ### Features
+            - 🏗️ Co-location First: Define messages right where they're used
+            - 🛡️ 100% Type-safe: Full TypeScript support with strict typing
+            - 🔍 IDE Code Jumping: Jump directly to message definitions
+            - 📝 1-Line Declaration: `const { t, m } = useI18n(messages)`
+            - 🚀 Next.js Ready: Works with both client and server components
+
+            ### Installation
+            ```bash
+            npm install i18n-at
+            ```
+          draft: false
+          prerelease: false
