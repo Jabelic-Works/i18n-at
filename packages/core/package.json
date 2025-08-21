@@ -30,7 +30,8 @@
     "typecheck": "tsc --noEmit"
   },
   "files": [
-    "dist"
+    "dist",
+    "../../README.md"
   ],
   "keywords": [
     "i18n",
