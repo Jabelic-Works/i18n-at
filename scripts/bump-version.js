@@ -33,11 +33,29 @@ function getCurrentVersion() {
   return corePackage.version;
 }
 
+function checkVersionOnNpm(version) {
+  try {
+    const output = execSync(`npm view i18n-at@${version} version`, { encoding: 'utf8', stdio: 'pipe' });
+    return output.trim() === version;
+  } catch (error) {
+    // バージョンが存在しない場合はエラーになるので、falseを返す
+    return false;
+  }
+}
+
 function bumpVersion(versionType, dryRun = false) {
   const currentVersion = getCurrentVersion();
   
   console.log(`📦 現在のバージョン: ${currentVersion}`);
   console.log(`🔄 バージョンタイプ: ${versionType}`);
+  
+  // npmでの現在のバージョンの存在確認
+  const currentVersionExists = checkVersionOnNpm(currentVersion);
+  if (currentVersionExists) {
+    console.log(`⚠️  バージョン ${currentVersion} は既にnpmに公開済みです`);
+  } else {
+    console.log(`✅ バージョン ${currentVersion} はnpmで利用可能です`);
+  }
   
   if (dryRun) {
     console.log('🔍 ドライランモード - 実際の変更は行いません');
@@ -61,6 +79,20 @@ function bumpVersion(versionType, dryRun = false) {
     }
     
     console.log(`✅ 新しいバージョン: ${newVersion}`);
+    
+    // 新しいバージョンの重複チェック
+    const cleanNewVersion = newVersion.replace('v', '');
+    const newVersionExists = checkVersionOnNpm(cleanNewVersion);
+    
+    if (newVersionExists) {
+      console.log(`❌ エラー: バージョン ${cleanNewVersion} は既にnpmに公開済みです！`);
+      console.log('別のバージョンタイプを選択するか、手動でバージョンを調整してください。');
+      if (!dryRun) {
+        process.exit(1);
+      }
+    } else {
+      console.log(`✅ バージョン ${cleanNewVersion} はnpmで利用可能です`);
+    }
     
     if (!dryRun) {
       // ルートのpackage.jsonも更新

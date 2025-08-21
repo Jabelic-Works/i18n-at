@@ -60,10 +60,30 @@ jobs:
           CURRENT_VERSION=$(node -p "require('./packages/core/package.json').version")
           echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
 
+      - name: Check if version already exists on npm
+        id: version_check
+        run: |
+          CURRENT_VERSION=$(node -p "require('./packages/core/package.json').version")
+          
+          # npmでバージョンをチェック
+          if npm view i18n-at@$CURRENT_VERSION version 2>/dev/null; then
+            echo "version_exists=true" >> $GITHUB_OUTPUT
+            echo "⚠️ Version $CURRENT_VERSION already exists on npm"
+          else
+            echo "version_exists=false" >> $GITHUB_OUTPUT
+            echo "✅ Version $CURRENT_VERSION is available"
+          fi
+
       - name: Bump version
         id: version_bump
         run: |
           cd packages/core
+          
+          # 現在のバージョンが既にnpmに存在する場合は、強制的にバージョンアップ
+          if [ "${{ steps.version_check.outputs.version_exists }}" = "true" ] && [ "${{ inputs.dry_run }}" = "false" ]; then
+            echo "⚠️ Current version already exists on npm. Forcing version bump..."
+          fi
+          
           if [ "${{ inputs.dry_run }}" = "true" ]; then
             NEW_VERSION=$(npm version ${{ inputs.version_type }} --no-git-tag-version --preid=beta)
             echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
@@ -73,6 +93,14 @@ jobs:
             NEW_VERSION=$(npm version ${{ inputs.version_type }} --no-git-tag-version)
             echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
             echo "✅ Version bumped to: $NEW_VERSION"
+            
+            # 新しいバージョンがnpmに既に存在するかチェック
+            NEW_VERSION_CLEAN=$(echo $NEW_VERSION | sed 's/^v//')
+            if npm view i18n-at@$NEW_VERSION_CLEAN version 2>/dev/null; then
+              echo "❌ Error: New version $NEW_VERSION already exists on npm!"
+              echo "Please choose a different version type or manually update the version."
+              exit 1
+            fi
           fi
 
       - name: Update root package.json version
@@ -116,13 +144,32 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Publish to npm
+      - name: Check if new version exists on npm
         if: ${{ !inputs.dry_run }}
+        id: final_version_check
+        run: |
+          NEW_VERSION_CLEAN=$(echo "${{ steps.version_bump.outputs.new_version }}" | sed 's/^v//')
+          if npm view i18n-at@$NEW_VERSION_CLEAN version 2>/dev/null; then
+            echo "should_publish=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Version $NEW_VERSION_CLEAN already exists on npm. Skipping publish."
+          else
+            echo "should_publish=true" >> $GITHUB_OUTPUT
+            echo "✅ Version $NEW_VERSION_CLEAN is ready to publish."
+          fi
+
+      - name: Publish to npm
+        if: ${{ !inputs.dry_run && steps.final_version_check.outputs.should_publish == 'true' }}
         run: |
           cd packages/core
           npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Skip publish (version exists)
+        if: ${{ !inputs.dry_run && steps.final_version_check.outputs.should_publish == 'false' }}
+        run: |
+          echo "⚠️ Skipping npm publish as version already exists."
+          echo "The Git tag and GitHub release will still be created."
 
       - name: Summary
         run: |
