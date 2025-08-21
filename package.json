@@ -6,7 +6,12 @@
   "scripts": {
     "build": "pnpm -r build",
     "dev": "pnpm -r dev",
-    "clean": "pnpm -r clean"
+    "clean": "pnpm -r clean",
+    "version:patch": "node scripts/bump-version.js patch",
+    "version:minor": "node scripts/bump-version.js minor",
+    "version:major": "node scripts/bump-version.js major",
+    "version:dry-run": "node scripts/bump-version.js patch --dry-run",
+    "release:prepare": "pnpm build && pnpm version:dry-run"
   },
   "devDependencies": {
     "typescript": "^5.0.0"
