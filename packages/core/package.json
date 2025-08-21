@@ -53,10 +53,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/i18n-toolkit.git"
+    "url": "https://github.com/jabelic-works/i18n-at.git"
   },
   "bugs": {
-    "url": "https://github.com/your-org/i18n-toolkit/issues"
+    "url": "https://github.com/jabelic-works/i18n-at/issues"
   },
-  "homepage": "https://github.com/your-org/i18n-toolkit#readme"
+  "homepage": "https://github.com/jabelic-works/i18n-at#readme"
 }
