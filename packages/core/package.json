@@ -1,6 +1,6 @@
 {
   "name": "i18n-at",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Type-safe internationalization tool for Next.js App Router with co-location and IDE code jumping",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -53,7 +53,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jabelic-works/i18n-at.git"
+    "url": "git+https://github.com/jabelic-works/i18n-at.git"
   },
   "bugs": {
     "url": "https://github.com/jabelic-works/i18n-at/issues"
