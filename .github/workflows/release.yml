@@ -1,13 +1,10 @@
-name: Release to NPM
+name: Release
 
 on:
-  push:
-    tags:
-      - "v*"
   workflow_dispatch:
     inputs:
-      version:
-        description: "Version to publish (e.g., patch, minor, major)"
+      version_type:
+        description: "Version type to bump"
         required: true
         default: "patch"
         type: choice
@@ -15,6 +12,15 @@ on:
           - patch
           - minor
           - major
+      dry_run:
+        description: "Dry run (no actual release)"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  packages: write
 
 jobs:
   release:
@@ -22,6 +28,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -31,63 +40,102 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: "10.12.4"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build core package
-        run: |
-          cd packages/core
-          pnpm build
+      - name: Build packages
+        run: pnpm build
 
-      - name: Run tests (if available)
+      - name: Configure Git
         run: |
-          cd packages/core
-          pnpm test || echo "No tests found, skipping..."
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
 
-      - name: Update version (manual trigger)
-        if: github.event_name == 'workflow_dispatch'
+      - name: Get current version
+        id: current_version
         run: |
-          cd packages/core
-          npm version ${{ github.event.inputs.version }} --no-git-tag-version
-          echo "NEW_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+          CURRENT_VERSION=$(node -p "require('./packages/core/package.json').version")
+          echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
 
-      - name: Get version from tag
-        if: github.event_name == 'push'
+      - name: Bump version
+        id: version_bump
         run: |
-          VERSION=${GITHUB_REF#refs/tags/v}
           cd packages/core
-          npm version $VERSION --no-git-tag-version
-          echo "NEW_VERSION=$VERSION" >> $GITHUB_ENV
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            NEW_VERSION=$(npm version ${{ inputs.version_type }} --no-git-tag-version --preid=beta)
+            echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+            echo "🔍 Dry run - would bump to version: $NEW_VERSION"
+            git checkout -- package.json
+          else
+            NEW_VERSION=$(npm version ${{ inputs.version_type }} --no-git-tag-version)
+            echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+            echo "✅ Version bumped to: $NEW_VERSION"
+          fi
 
-      - name: Publish to NPM
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Update root package.json version
+        if: ${{ !inputs.dry_run }}
         run: |
-          cd packages/core
-          npm publish --access public
+          CORE_VERSION=$(node -p "require('./packages/core/package.json').version")
+          node -e "
+            const fs = require('fs');
+            const pkg = require('./package.json');
+            pkg.version = '$CORE_VERSION';
+            fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2) + '\n');
+          "
+
+      - name: Commit version changes
+        if: ${{ !inputs.dry_run }}
+        run: |
+          git add packages/core/package.json package.json
+          git commit -m "chore: bump version to ${{ steps.version_bump.outputs.new_version }}"
+
+      - name: Create Git tag
+        if: ${{ !inputs.dry_run }}
+        run: |
+          TAG_NAME="${{ steps.version_bump.outputs.new_version }}"
+          git tag -a "$TAG_NAME" -m "Release $TAG_NAME"
+          git push origin HEAD --tags
 
       - name: Create GitHub Release
-        if: github.event_name == 'push'
+        if: ${{ !inputs.dry_run }}
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ steps.version_bump.outputs.new_version }}
+          release_name: Release ${{ steps.version_bump.outputs.new_version }}
           body: |
-            ## Changes in v${{ env.NEW_VERSION }}
+            ## Changes in ${{ steps.version_bump.outputs.new_version }}
 
-            ### Features
-            - 🏗️ Co-location First: Define messages right where they're used
-            - 🛡️ 100% Type-safe: Full TypeScript support with strict typing
-            - 🔍 IDE Code Jumping: Jump directly to message definitions
-            - 📝 1-Line Declaration: `const { t, m } = useI18n(messages)`
-            - 🚀 Next.js Ready: Works with both client and server components
+            * Automated release from ${{ steps.current_version.outputs.current }} to ${{ steps.version_bump.outputs.new_version }}
 
-            ### Installation
-            ```bash
-            npm install i18n-at
-            ```
+            For detailed changes, see the commit history.
           draft: false
           prerelease: false
+
+      - name: Publish to npm
+        if: ${{ !inputs.dry_run }}
+        run: |
+          cd packages/core
+          npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Summary
+        run: |
+          echo "## Release Summary" >> $GITHUB_STEP_SUMMARY
+          echo "* **Previous version:** ${{ steps.current_version.outputs.current }}" >> $GITHUB_STEP_SUMMARY
+          echo "* **New version:** ${{ steps.version_bump.outputs.new_version }}" >> $GITHUB_STEP_SUMMARY
+          echo "* **Version type:** ${{ inputs.version_type }}" >> $GITHUB_STEP_SUMMARY
+          echo "* **Dry run:** ${{ inputs.dry_run }}" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            echo "* **Status:** 🔍 Dry run completed - no changes made" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "* **Status:** ✅ Release completed successfully" >> $GITHUB_STEP_SUMMARY
+            echo "* **GitHub Release:** [Release ${{ steps.version_bump.outputs.new_version }}](https://github.com/${{ github.repository }}/releases/tag/${{ steps.version_bump.outputs.new_version }})" >> $GITHUB_STEP_SUMMARY
+            echo "* **npm Package:** [i18n-at@${{ steps.version_bump.outputs.new_version }}](https://www.npmjs.com/package/i18n-at)" >> $GITHUB_STEP_SUMMARY
+          fi
