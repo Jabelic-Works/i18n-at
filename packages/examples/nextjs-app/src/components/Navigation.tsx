@@ -1,6 +1,7 @@
 import { at } from "i18n-at";
 import { getI18n } from "i18n-at/server";
-import { messages, i18nConfig, type AppLocale } from "@/messages";
+import { messages, type AppLocale } from "@/messages";
+import { i18nConfig } from "../../i18nconfig";
 import Link from "next/link";
 
 interface NavigationProps {
@@ -8,7 +9,7 @@ interface NavigationProps {
 }
 
 export default function Navigation({ locale }: NavigationProps) {
-  const { t, m } = getI18n(messages, locale);
+  const { t, m } = getI18n(messages, locale, i18nConfig.interpolationFormat);
 
   return (
     <nav className="bg-white shadow-sm border-b border-gray-200">
@@ -39,7 +40,7 @@ export default function Navigation({ locale }: NavigationProps) {
           <div className="flex items-center space-x-2">
             <span className="text-sm text-gray-500">Language:</span>
             <div className="flex items-center space-x-1">
-              {i18nConfig.locales.map((loc) => (
+              {i18nConfig.localeKeys.map((loc) => (
                 <Link
                   key={loc}
                   href={`/${loc}`}

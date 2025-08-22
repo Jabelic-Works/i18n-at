@@ -1,11 +1,6 @@
 import type { Metadata } from "next";
 import { I18nClientProvider } from "i18n-at/client";
-import { i18nConfig, type AppLocale } from "@/messages";
-import { Geist, Geist_Mono } from "next/font/google";
-
-export function generateStaticParams() {
-  return i18nConfig.locales.map((locale) => ({ locale }));
-}
+import { type AppLocale } from "@/messages";
 
 export default async function LocaleLayout({
   children,

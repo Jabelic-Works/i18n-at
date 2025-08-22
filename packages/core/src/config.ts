@@ -1,5 +1,8 @@
 // i18n設定を定義するライブラリ関数
 
+export type InterpolationFormat = "none" | "intl" | "legacy" | "double";
+export const DEFAULT_INTERPOLATION_FORMAT: InterpolationFormat = "legacy";
+
 export interface LocaleConfig {
   name: string; // 表示名
   direction?: "ltr" | "rtl"; // 文字方向
@@ -10,6 +13,7 @@ export interface I18nConfig<TLocales extends Record<string, LocaleConfig>> {
   locales: TLocales;
   defaultLocale: keyof TLocales;
   fallbackLocale?: keyof TLocales;
+  interpolationFormat?: InterpolationFormat; // 'none' = no interpolation, 'intl' = {$name}, 'legacy' = {name}, 'double' = {{name}}
 }
 
 // i18n設定を定義する関数（ライブラリのエントリーポイント）

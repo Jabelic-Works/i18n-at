@@ -2,7 +2,7 @@
 import { defineMessages } from "i18n-at";
 
 export const { messages } = defineMessages({
-  en: {
+  "en-US": {
     dashboard: {
       title: "Dashboard",
       welcome: "Welcome, {name}!",
@@ -18,7 +18,7 @@ export const { messages } = defineMessages({
       cancel: "Cancel",
     },
   },
-  ja: {
+  "ja-JP": {
     dashboard: {
       title: "ダッシュボード",
       welcome: "{name} さん、ようこそ！",
@@ -34,7 +34,7 @@ export const { messages } = defineMessages({
       cancel: "キャンセル",
     },
   },
-  zh: {
+  "zh-CN": {
     dashboard: {
       title: "仪表板",
       welcome: "欢迎，{name}！",
@@ -51,11 +51,5 @@ export const { messages } = defineMessages({
     },
   },
 });
-
-// Configuration for locale extraction
-export const i18nConfig = {
-  locales: ["en", "ja", "zh"],
-  defaultLocale: "en",
-} as const;
 
 export type AppLocale = keyof typeof messages;
