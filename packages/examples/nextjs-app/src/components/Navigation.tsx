@@ -1,4 +1,3 @@
-import { at } from "i18n-at";
 import { getI18n } from "i18n-at/server";
 import { messages, type AppLocale } from "@/messages";
 import { i18nConfig } from "../../i18nconfig";

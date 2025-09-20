@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { i18nConfig } from "@/messages";
+import { i18nConfig } from "../../i18nconfig";
 
 export default function HomePage() {
   // Redirect to default locale

@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { I18nClientProvider } from "i18n-at/client";
 import { type AppLocale } from "@/messages";
 
