@@ -1,0 +1,4 @@
+# docs ディレクトリの独立したpnpm設定
+shamefully-hoist=false
+auto-install-peers=true
+strict-peer-dependencies=false
