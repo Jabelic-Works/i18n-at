@@ -1,0 +1,8 @@
+# Redirect old URLs to new structure
+/quick-start /essentials/getting-started 301
+/api-reference /api/core-functions 301
+/why-this-library /introduction/what-is-i18n-at 301
+/advanced-usage /advanced/typescript-support 301
+
+# SPA fallback for client-side routing
+/* /index.html 200
