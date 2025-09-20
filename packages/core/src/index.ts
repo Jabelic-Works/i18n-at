@@ -3,6 +3,7 @@ export {
   defineI18nConfig,
   type LocaleConfig,
   type I18nConfig,
+  type InterpolationFormat,
   type ExtractLocales,
   type ExtractDefaultLocale,
   type ExtractConfigLocales,

@@ -4,6 +4,7 @@ import Dashboard from "@/components/Dashboard";
 import Navigation from "@/components/Navigation";
 import { I18nClientProvider } from "i18n-at/client";
 import { getI18n } from "i18n-at/server";
+import { i18nConfig } from "../../../i18nconfig";
 
 export default async function Page({
   params,
@@ -11,7 +12,7 @@ export default async function Page({
   params: Promise<{ locale: AppLocale }>;
 }) {
   const { locale } = await params;
-  const { t, m } = getI18n(messages, locale);
+  const { t, m } = getI18n(messages, locale, i18nConfig.interpolationFormat);
 
   return (
     <div className="min-h-screen bg-gray-50">

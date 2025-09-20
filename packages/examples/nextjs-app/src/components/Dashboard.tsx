@@ -1,12 +1,22 @@
 "use client";
-import { useI18n, useLocale } from "i18n-at/client";
+import {
+  ExtractLocaleMessage,
+  Messages,
+  useI18n,
+  useLocale,
+} from "i18n-at/client";
 import { AppLocale, messages } from "@/messages";
 import { useState } from "react";
+import { i18nConfig } from "../../i18nconfig";
 
 export default function Dashboard() {
+  /** messages type. */
+  type _AppLocales = ExtractLocaleMessage<
+    typeof messages,
+    keyof typeof messages // en-US | ja-JP | zh-CN
+  >;
   const locale = useLocale<AppLocale>();
-  const { t, m } = useI18n(messages);
-
+  const { t, m } = useI18n(messages, i18nConfig.interpolationFormat);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSave = () => {

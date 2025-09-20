@@ -26,19 +26,19 @@ export const { messages } = defineMessages({
   en: {
     dashboard: {
       title: "Dashboard",
-      welcome: "Welcome, {name}!",
+      welcome: "Welcome, {$name}!",
     },
   },
   ja: {
     dashboard: {
       title: "ダッシュボード",
-      welcome: "{name} さん、ようこそ！",
+      welcome: "{$name} さん、ようこそ！",
     },
   },
   zh: {
     dashboard: {
       title: "仪表板",
-      welcome: "欢迎，{name}！",
+      welcome: "欢迎，{$name}！",
     },
   },
 });
@@ -132,8 +132,8 @@ const { messages } = defineMessages({
 Get type-safe locale-specific messages.
 
 ```typescript
-const enMessages = at("en", messages); // Type: { hello: string }
-const jaMessages = at("ja", messages); // Type: { hello: string }
+const enMessages = at("en-US", messages); // Type: { hello: string }
+const jaMessages = at("ja-JP", messages); // Type: { hello: string }
 ```
 
 #### `getI18n(messages, locale)`
@@ -166,13 +166,13 @@ export const { messages } = defineMessages({
   en: {
     dashboard: {
       title: "Dashboard",
-      welcome: "Welcome, {name}!",
+      welcome: "Welcome, {$name}!",
     },
   },
   ja: {
     dashboard: {
       title: "ダッシュボード",
-      welcome: "{name} さん、ようこそ！",
+      welcome: "{$name} さん、ようこそ！",
     },
   },
 });
@@ -210,12 +210,12 @@ t("dashboard.title"); // ← String literal, error-prone
 // Conditional locale loading
 const getMessages = (locale: string) => {
   switch (locale) {
-    case "en":
-      return at("en", messages);
-    case "ja":
-      return at("ja", messages);
+    case "en-US":
+      return at("en-US", messages);
+    case "ja-JP":
+      return at("ja-JP", messages);
     default:
-      return at("en", messages);
+      return at("en-US", messages);
   }
 };
 ```
