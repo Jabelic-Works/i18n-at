@@ -5,6 +5,17 @@ export default defineConfig({
   title: "i18n-at",
   description:
     "Type-safe internationalization tool for Next.js App Router with co-location and IDE code jumping",
+  cleanUrls: true,
+  head: [
+    ["meta", { name: "theme-color", content: "#646cff" }],
+    ["meta", { name: "og:type", content: "website" }],
+    ["meta", { name: "og:locale", content: "en" }],
+    ["meta", { name: "og:site_name", content: "i18n-at" }],
+    // ["meta", { name: "og:image", content: "https://i18n-at.dev/og-image.png" }],
+  ],
+  sitemap: {
+    // hostname: "https://i18n-at.dev",
+  },
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [

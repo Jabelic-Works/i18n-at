@@ -1,0 +1,10 @@
+name = "i18n-at-docs"
+compatibility_date = "2024-01-01"
+
+[env.production]
+routes = [
+  { pattern = "i18n-at.dev", zone_name = "i18n-at.dev" }
+]
+
+[[env.production.pages_build_output_dir]]
+directory = ".vitepress/dist"
