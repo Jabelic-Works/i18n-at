@@ -3,7 +3,7 @@ export interface MessageNode {
   [key: string]: string | MessageNode;
 }
 
-// メッセージ定義の型（ジェネリックバージョン）
+// メッセージ定義の型
 export type Messages<
   T extends MessageNode,
   TLocales extends string = string

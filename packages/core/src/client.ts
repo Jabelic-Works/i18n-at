@@ -17,31 +17,6 @@ export function useLocale<T extends string>(): T {
   return locale as T;
 }
 
-// // 各コンポーネントが独立してmessagesを使用するためのフック
-// export function useI18n<TMessages extends Messages<MessageNode, string>>(
-//   messages: TMessages
-// ) {
-//   const locale = useLocale() as keyof TMessages;
-
-//   const t = (key: string, params?: Record<string, string | number>): string => {
-//     // keyがオブジェクトの場合は値を抽出
-//     const messageKey = typeof key === "string" ? key : String(key);
-//     let text = getValueFromPath(messages[locale], messageKey) ?? messageKey;
-
-//     if (params) {
-//       for (const [pKey, pValue] of Object.entries(params)) {
-//         text = text.replace(`{$${pKey}}`, String(pValue));
-//       }
-//     }
-//     return text;
-//   };
-
-//   const m = at(locale, messages);
-
-//   return { t, m };
-// }
-
-// 各コンポーネントが独立してmessagesを使用するためのフック
 export function useI18n<TMessages extends Messages<MessageNode, string>>(
   messages: TMessages,
   interpolationFormat: InterpolationFormat = DEFAULT_INTERPOLATION_FORMAT
