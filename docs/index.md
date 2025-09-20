@@ -7,11 +7,11 @@ hero:
   tagline: Type-safe internationalization tool for Next.js App Router with co-location and IDE code jumping
   actions:
     - theme: brand
-      text: Quick Start
-      link: /quick-start
+      text: Get Started
+      link: /essentials/getting-started
     - theme: alt
-      text: API Reference
-      link: /api-reference
+      text: Why i18n-at?
+      link: /introduction/what-is-i18n-at
 
 features:
   - title: 🏗️ Co-location First

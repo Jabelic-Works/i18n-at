@@ -9,24 +9,48 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: "Home", link: "/" },
-      { text: "Quick Start", link: "/quick-start" },
-      { text: "API Reference", link: "/api-reference" },
-      { text: "Why i18n-at?", link: "/why-this-library" },
+      { text: "Guide", link: "/introduction/what-is-i18n-at" },
+      { text: "API", link: "/api/core-functions" },
     ],
 
     sidebar: [
       {
-        text: "Getting Started",
+        text: "Introduction",
         items: [
-          { text: "Quick Start", link: "/quick-start" },
-          { text: "Why i18n-at?", link: "/why-this-library" },
+          { text: "What is i18n-at?", link: "/introduction/what-is-i18n-at" },
+          { text: "Installation", link: "/introduction/installation" },
         ],
       },
       {
-        text: "Documentation",
+        text: "Essentials",
         items: [
-          { text: "API Reference", link: "/api-reference" },
-          { text: "Advanced Usage", link: "/advanced-usage" },
+          { text: "Getting Started", link: "/essentials/getting-started" },
+          { text: "Configuration", link: "/essentials/configuration" },
+          {
+            text: "Message Format Syntax",
+            link: "/essentials/message-format-syntax",
+          },
+          { text: "Variable Interpolation", link: "/essentials/interpolation" },
+          { text: "Server Components", link: "/essentials/server-components" },
+          { text: "Client Components", link: "/essentials/client-components" },
+        ],
+      },
+      {
+        text: "Advanced",
+        items: [
+          { text: "TypeScript Support", link: "/advanced/typescript-support" },
+          { text: "Component Patterns", link: "/advanced/component-patterns" },
+          { text: "Lazy Loading", link: "/advanced/lazy-loading" },
+          { text: "Performance Optimization", link: "/advanced/optimization" },
+        ],
+      },
+      {
+        text: "API Reference",
+        items: [
+          { text: "Core Functions", link: "/api/core-functions" },
+          { text: "Server Functions", link: "/api/server-functions" },
+          { text: "Client Functions", link: "/api/client-functions" },
+          { text: "Type Definitions", link: "/api/types" },
         ],
       },
     ],
