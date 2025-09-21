@@ -1,0 +1,81 @@
+name: Main CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      core-changed: ${{ steps.changes.outputs.core }}
+      docs-changed: ${{ steps.changes.outputs.docs }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for changes
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            core:
+              - 'packages/core/**'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+            docs:
+              - 'docs/**'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+
+  core-ci:
+    needs: check-changes
+    if: needs.check-changes.outputs.core-changed == 'true'
+    uses: ./.github/workflows/core-ci.yml
+
+  docs-ci:
+    needs: check-changes
+    if: needs.check-changes.outputs.docs-changed == 'true'
+    uses: ./.github/workflows/docs-ci.yml
+
+  integration-test:
+    runs-on: ubuntu-latest
+    needs: [core-ci, docs-ci]
+    if: always() && (needs.core-ci.result == 'success' || needs.core-ci.result == 'skipped') && (needs.docs-ci.result == 'success' || needs.docs-ci.result == 'skipped')
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.12.4
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build all packages
+        run: pnpm run build
+
+      - name: Verify examples work with built package
+        if: needs.check-changes.outputs.core-changed == 'true'
+        working-directory: packages/examples/nextjs-app
+        run: |
+          pnpm install
+          pnpm run build

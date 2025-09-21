@@ -1,0 +1,74 @@
+name: Core Package CI
+
+on:
+  push:
+    paths:
+      - "packages/core/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/core-ci.yml"
+  pull_request:
+    paths:
+      - "packages/core/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/core-ci.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.12.4
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type check
+        working-directory: packages/core
+        run: pnpm run typecheck
+
+      - name: Run tests
+        working-directory: packages/core
+        run: pnpm run test
+
+      - name: Build package
+        working-directory: packages/core
+        run: pnpm run build
+
+      - name: Check package exports
+        working-directory: packages/core
+        run: |
+          # dist ディレクトリが存在することを確認
+          test -d dist
+
+          # 必要なファイルが存在することを確認
+          test -f dist/index.js
+          test -f dist/index.d.ts
+          test -f dist/client.js
+          test -f dist/client.d.ts
+          test -f dist/server.js
+          test -f dist/server.d.ts
