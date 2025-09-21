@@ -1,0 +1,8 @@
+name = "i18n-at-docs"
+compatibility_date = "2024-09-21"
+
+[env.production]
+name = "i18n-at-docs"
+
+[env.preview]
+name = "i18n-at-docs-preview"
