@@ -1,17 +1,6 @@
 name = "i18n-at-docs"
-main = "src/index.js"
 compatibility_date = "2025-09-22"
+pages_build_output_dir = ".vitepress/dist"
 
-[site]
-bucket = ".vitepress/dist"
-
-[[kv_namespaces]]
-binding = "CACHE"
-# id = "your-kv-namespace-id"
-# preview_id = "your-preview-kv-namespace-id"
-
-[env.production]
-name = "i18n-at-docs-production"
-
-[env.staging]
-name = "i18n-at-docs-staging"
+[build]
+command = "cd docs && pnpm install && pnpm run docs:build"

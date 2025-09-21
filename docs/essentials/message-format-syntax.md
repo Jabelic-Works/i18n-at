@@ -112,5 +112,5 @@ t(m.greeting, { name: "Alice", count: 5 });
 
 <!-- ## Next Steps
 
-- Learn about [Pluralization](/essentials/pluralization)
-- Explore [Advanced Interpolation](/advanced/component-interpolation) -->
+- Learn about [Variable Interpolation](/essentials/interpolation)
+- Explore [TypeScript Support](/advanced/typescript-support) -->

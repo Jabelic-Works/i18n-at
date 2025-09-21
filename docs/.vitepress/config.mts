@@ -16,6 +16,12 @@ export default defineConfig({
   sitemap: {
     // hostname: "https://i18n-at.dev",
   },
+  ignoreDeadLinks: [
+    // Ignore old files that are being migrated
+    /^\/api-reference/,
+    /^\/essentials\/pluralization/,
+    /^\/advanced\/component-interpolation/,
+  ],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
