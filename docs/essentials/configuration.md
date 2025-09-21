@@ -32,17 +32,14 @@ export const i18nConfig = defineI18nConfig({
     "en-US": {
       name: "English",
       direction: "ltr",
-      dateFormat: "MM/dd/yyyy",
     },
     "ja-JP": {
       name: "日本語",
       direction: "ltr",
-      dateFormat: "yyyy/MM/dd",
     },
     "ar-SA": {
       name: "العربية",
       direction: "rtl",
-      dateFormat: "dd/MM/yyyy",
     },
   },
   defaultLocale: "en-US",
@@ -53,7 +50,6 @@ export const i18nConfig = defineI18nConfig({
 
 - `name` (required): Display name for the locale
 - `direction` (optional): Text direction - `"ltr"` or `"rtl"`, defaults to `"ltr"`
-- `dateFormat` (optional): Date format pattern for this locale
 
 ### defaultLocale
 
@@ -159,7 +155,7 @@ Get the configuration for a specific locale:
 
 ```typescript
 const enConfig = i18nConfig.getLocaleConfig("en-US");
-// { name: "English", direction: "ltr", dateFormat: "MM/dd/yyyy" }
+// { name: "English", direction: "ltr" }
 ```
 
 ## Type Safety
@@ -217,17 +213,14 @@ export const i18nConfig = defineI18nConfig({
     en: {
       name: "English",
       direction: "ltr",
-      dateFormat: "MM/dd/yyyy",
     },
     ja: {
       name: "日本語",
       direction: "ltr",
-      dateFormat: "yyyy年MM月dd日",
     },
     ar: {
       name: "العربية",
       direction: "rtl",
-      dateFormat: "dd/MM/yyyy",
     },
   },
   defaultLocale: "en",
@@ -244,4 +237,3 @@ export type AppLocaleConfig = (typeof i18nConfig.locales)[AppLocale];
 
 - Learn about [Message Format Syntax](/essentials/message-format-syntax)
 - Explore [TypeScript Support](/advanced/typescript-support)
-
