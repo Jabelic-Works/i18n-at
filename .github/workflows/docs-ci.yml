@@ -1,0 +1,109 @@
+name: Documentation CI
+
+on:
+  push:
+    paths:
+      - "docs/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/docs-ci.yml"
+  pull_request:
+    paths:
+      - "docs/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/docs-ci.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.12.4
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build documentation
+        working-directory: docs
+        run: pnpm run docs:build
+
+      - name: Check build output
+        working-directory: docs
+        run: |
+          # VitePress のビルド出力が存在することを確認
+          test -d .vitepress/dist
+          test -f .vitepress/dist/index.html
+
+  link-check:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.12.4
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build documentation
+        working-directory: docs
+        run: pnpm run docs:build
+
+      - name: Install markdown-link-check
+        run: npm install -g markdown-link-check
+
+      - name: Check internal links
+        working-directory: docs
+        run: |
+          find . -name "*.md" -not -path "./node_modules/*" -not -path "./.vitepress/*" | \
+          xargs markdown-link-check --config .github/workflows/link-check-config.json || true
+
+      - name: Preview site
+        working-directory: docs
+        run: |
+          pnpm run docs:preview &
+          PREVIEW_PID=$!
+          sleep 5
+
+          # サイトが正常に起動しているか確認
+          curl -f http://localhost:4173/ || echo "Preview server check failed"
+
+          kill $PREVIEW_PID

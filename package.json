@@ -11,6 +11,7 @@
     "docs:dev": "cd docs && pnpm run docs:dev",
     "docs:deploy": "npm run docs:build && npx wrangler pages deploy docs/.vitepress/dist --project-name=i18n-at-docs",
     "docs:preview": "npm run docs:build && npx wrangler pages deploy docs/.vitepress/dist --project-name=i18n-at-docs --env=preview",
+    "test": "pnpm -r test",
     "version:patch": "node scripts/bump-version.js patch",
     "version:minor": "node scripts/bump-version.js minor",
     "version:major": "node scripts/bump-version.js major",

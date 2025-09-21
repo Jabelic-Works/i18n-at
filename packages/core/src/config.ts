@@ -22,6 +22,8 @@ export function defineI18nConfig<const T extends Record<string, LocaleConfig>>(
 ) {
   return {
     ...config,
+    // デフォルト値を設定
+    interpolationFormat: config.interpolationFormat ?? DEFAULT_INTERPOLATION_FORMAT,
     // 型から自動生成される型とヘルパー
     localeKeys: Object.keys(config.locales) as Array<keyof T>,
     isValidLocale: (locale: unknown): locale is keyof T =>
