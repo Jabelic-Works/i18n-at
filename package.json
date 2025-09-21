@@ -7,7 +7,7 @@
     "build": "pnpm -r build",
     "dev": "pnpm -r dev",
     "clean": "pnpm -r clean",
-    "docs:build": "cd docs && pnpm install && pnpm run docs:build",
+    "docs:build": "cd docs && NODE_ENV=development pnpm install --prod=false && pnpm run docs:build",
     "docs:dev": "cd docs && pnpm run docs:dev",
     "version:patch": "node scripts/bump-version.js patch",
     "version:minor": "node scripts/bump-version.js minor",
