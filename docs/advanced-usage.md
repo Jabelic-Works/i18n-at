@@ -184,25 +184,6 @@ t(m.order.summary, {
 // "Order #12345 for John Doe - 3 items ($99.99)"
 ```
 
-### Pluralization
-
-```typescript
-const { messages } = defineMessages({
-  en: {
-    items: {
-      count: "{$count} {$count, plural, =0 {items} =1 {item} other {items}}",
-      selected:
-        "{$selected} of {$total} {$total, plural, =1 {item} other {items}} selected",
-    },
-  },
-});
-
-// Usage
-t(m.items.count, { count: 0 }); // "0 items"
-t(m.items.count, { count: 1 }); // "1 item"
-t(m.items.count, { count: 5 }); // "5 items"
-```
-
 ### Conditional Messages
 
 ```typescript
@@ -468,4 +449,3 @@ Now that you've mastered advanced usage patterns:
 - [Check out the API Reference](/api-reference) for complete documentation
 - [Learn why co-location matters](/why-this-library) for the philosophy behind i18n-at
 - [Start with the Quick Start guide](/quick-start) if you're new to i18n-at
-

@@ -110,8 +110,7 @@ t(m.greeting, { name: "Alice", count: 5 });
 3. **Avoid HTML in messages**: Use component composition instead
 4. **Be consistent with naming**: Use the same variable names across locales
 
-## Next Steps
+<!-- ## Next Steps
 
 - Learn about [Pluralization](/essentials/pluralization)
-- Explore [Advanced Interpolation](/advanced/component-interpolation)
-
+- Explore [Advanced Interpolation](/advanced/component-interpolation) -->

@@ -1,10 +1,17 @@
 name = "i18n-at-docs"
-compatibility_date = "2024-01-01"
+main = "src/index.js"
+compatibility_date = "2025-09-22"
+
+[site]
+bucket = ".vitepress/dist"
+
+[[kv_namespaces]]
+binding = "CACHE"
+# id = "your-kv-namespace-id"
+# preview_id = "your-preview-kv-namespace-id"
 
 [env.production]
-routes = [
-  { pattern = "i18n-at.dev", zone_name = "i18n-at.dev" }
-]
+name = "i18n-at-docs-production"
 
-[[env.production.pages_build_output_dir]]
-directory = ".vitepress/dist"
+[env.staging]
+name = "i18n-at-docs-staging"
