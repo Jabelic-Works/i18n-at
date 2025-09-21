@@ -41,7 +41,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: "10.12.4"
+          version: 10.12.4
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -64,7 +64,7 @@ jobs:
         id: version_check
         run: |
           CURRENT_VERSION=$(node -p "require('./packages/core/package.json').version")
-          
+
           # npmでバージョンをチェック
           if npm view i18n-at@$CURRENT_VERSION version 2>/dev/null; then
             echo "version_exists=true" >> $GITHUB_OUTPUT
@@ -78,12 +78,12 @@ jobs:
         id: version_bump
         run: |
           cd packages/core
-          
+
           # 現在のバージョンが既にnpmに存在する場合は、強制的にバージョンアップ
           if [ "${{ steps.version_check.outputs.version_exists }}" = "true" ] && [ "${{ inputs.dry_run }}" = "false" ]; then
             echo "⚠️ Current version already exists on npm. Forcing version bump..."
           fi
-          
+
           if [ "${{ inputs.dry_run }}" = "true" ]; then
             NEW_VERSION=$(npm version ${{ inputs.version_type }} --no-git-tag-version --preid=beta)
             echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
