@@ -7,7 +7,7 @@
     "build": "pnpm -r build",
     "dev": "pnpm -r dev",
     "clean": "pnpm -r clean",
-    "docs:build": "cd docs && pnpm install --prod=false && pnpm run docs:build",
+    "docs:build": "cd docs && npx vitepress build",
     "docs:dev": "cd docs && pnpm run docs:dev",
     "version:patch": "node scripts/bump-version.js patch",
     "version:minor": "node scripts/bump-version.js minor",
@@ -16,7 +16,8 @@
     "release:prepare": "pnpm build && pnpm version:dry-run"
   },
   "devDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vitepress": "^1.6.4"
   },
   "packageManager": "pnpm@10.12.4"
 }

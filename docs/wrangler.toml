@@ -1,6 +1,6 @@
 name = "i18n-at-docs"
-compatibility_date = "2025-09-22"
+compatibility_date = "2025-09-21"
 pages_build_output_dir = ".vitepress/dist"
 
 [build]
-command = "cd docs && pnpm install && pnpm run docs:build"
+command = "npx vitepress build"
