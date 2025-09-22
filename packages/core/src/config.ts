@@ -5,8 +5,6 @@ export const DEFAULT_INTERPOLATION_FORMAT: InterpolationFormat = "legacy";
 
 export interface LocaleConfig {
   name: string; // 表示名
-  direction?: "ltr" | "rtl"; // 文字方向
-  dateFormat?: string; // 日付フォーマット
 }
 
 export interface I18nConfig<TLocales extends Record<string, LocaleConfig>> {
