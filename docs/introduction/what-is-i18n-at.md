@@ -7,7 +7,6 @@ i18n-at is a type-safe internationalization tool designed specifically for Next.
 Unlike traditional i18n libraries that force you to manage translations in separate files, i18n-at lets you **define and use messages in the same place**. This means:
 
 - 📍 **Messages live next to their usage** - Keep translations close to your components
-- 🔍 **IDE code jumping** - Press F12 to jump directly to message definitions
 - 🧹 **Easy maintenance** - Refactor components and translations move with them
 
 ## 🛡️ 100% Type-safe
@@ -16,6 +15,7 @@ With full TypeScript support, you'll catch translation errors at compile time:
 
 - ✅ **Autocomplete for all message paths**
 - ✅ **Type checking for interpolation parameters**
+- ✅ **IDE code jumping**
 - ✅ **No more runtime translation key errors**
 
 ## ⚡ Developer Experience
@@ -33,4 +33,3 @@ Built specifically for Next.js App Router:
 - **Server Components support** - Use translations in RSC
 - **Client Components support** - Hooks for client-side usage
 - **App Router optimized** - Follows Next.js best practices
-
