@@ -35,7 +35,7 @@ describe("config", () => {
     it("should get locale config with getLocaleConfig", () => {
       const config = defineI18nConfig({
         locales: {
-          en: { name: "English", direction: "ltr" },
+          en: { name: "English" },
           ja: { name: "Japanese" },
         },
         defaultLocale: "en",
@@ -43,7 +43,6 @@ describe("config", () => {
 
       expect(config.getLocaleConfig("en")).toEqual({
         name: "English",
-        direction: "ltr",
       });
       expect(config.getLocaleConfig("ja")).toEqual({ name: "Japanese" });
     });
