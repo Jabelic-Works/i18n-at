@@ -23,5 +23,26 @@
     "vitepress": "^1.6.4",
     "wrangler": "^3.0.0"
   },
-  "packageManager": "pnpm@10.12.4"
+  "packageManager": "pnpm@10.12.4",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jabelic-works/i18n-at.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jabelic-works/i18n-at/issues"
+  },
+  "files": [
+    "README.md"
+  ],
+  "keywords": [
+    "i18n",
+    "internationalization",
+    "typescript",
+    "react",
+    "type-safe",
+    "code-jumping",
+    "nextjs"
+  ],
+  "homepage": "https://github.com/jabelic-works/i18n-at/tree/main/packages/core#readme",
+  "license": "MIT"
 }
