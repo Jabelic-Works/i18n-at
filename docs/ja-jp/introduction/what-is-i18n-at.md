@@ -28,8 +28,7 @@ i18n-at は、Next.js App Router アプリケーション専用に設計され�
 
 ## 🎯 Next.js に最適
 
-Next.js App Router 専用に構築：
+Next.js App Router を想定してします：
 
 - **Server Components サポート** - RSC で翻訳を使用
 - **Client Components サポート** - クライアントサイド使用のためのフック
-- **App Router 最適化** - Next.js のベストプラクティスに従う

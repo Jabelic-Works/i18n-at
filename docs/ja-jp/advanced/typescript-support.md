@@ -385,8 +385,3 @@ function validateLocale<T extends Messages>(
 3. **動的アクセス用の型ガードを作成** - 動的メッセージキーを安全に処理
 4. **ジェネリックコンポーネントを使用** - 再利用可能で型安全な翻訳コンポーネントを構築
 5. **設定型を抽出** - ロケール管理にユーティリティ型を使用
-
-## 次のステップ
-
-- [コンポーネントパターン](/ja-jp/advanced/component-patterns)を探る
-- [パフォーマンス最適化](/ja-jp/advanced/optimization)を学ぶ

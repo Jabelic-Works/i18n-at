@@ -1,7 +1,5 @@
 # サーバーコンポーネント
 
-最適なパフォーマンスのために Next.js サーバーコンポーネントで i18n-at を使用する方法を学びます。
-
 ## 基本的な使用方法
 
 サーバーコンポーネントでは、`getI18n`関数を使用します：
@@ -27,96 +25,7 @@ export default function Page({
 }
 ```
 
-## 非同期コンポーネント
-
-サーバーコンポーネントは非同期にできるため、翻訳と並行してデータを取得できます：
-
-```typescript
-import { getI18n } from "i18n-at";
-import { messages } from "@/messages";
-
-export default async function ProductPage({
-  params: { locale, id },
-}: {
-  params: { locale: string; id: string };
-}) {
-  const { t, m } = getI18n(messages, locale);
-
-  // 翻訳の準備と並行してデータを取得
-  const product = await fetchProduct(id);
-
-  return (
-    <div>
-      <h1>{t(m.product.title, { name: product.name })}</h1>
-      <p>{t(m.product.price, { amount: product.price })}</p>
-    </div>
-  );
-}
-```
-
-## レイアウトコンポーネント
-
-レイアウトコンポーネントで翻訳を使用：
-
-```typescript
-// app/[locale]/layout.tsx
-import { getI18n } from "i18n-at";
-import { messages } from "@/messages";
-
-export default function LocaleLayout({
-  children,
-  params: { locale },
-}: {
-  children: React.ReactNode;
-  params: { locale: string };
-}) {
-  const { t, m } = getI18n(messages, locale);
-
-  return (
-    <div>
-      <header>
-        <h1>{t(m.app.title)}</h1>
-      </header>
-      <main>{children}</main>
-      <footer>
-        <p>{t(m.app.copyright)}</p>
-      </footer>
-    </div>
-  );
-}
-```
-
-## メタデータ
-
-SEO 用のローカライズされたメタデータを生成：
-
-```typescript
-import { Metadata } from "next";
-import { getI18n } from "i18n-at";
-import { messages } from "@/messages";
-
-export async function generateMetadata({
-  params: { locale },
-}: {
-  params: { locale: string };
-}): Promise<Metadata> {
-  const { t, m } = getI18n(messages, locale);
-
-  return {
-    title: t(m.meta.title),
-    description: t(m.meta.description),
-  };
-}
-```
-
-## パフォーマンスの利点
-
-i18n-at を使用したサーバーコンポーネントは、いくつかのパフォーマンス上の利点を提供します：
-
-1. **クライアントに JavaScript を送信しない** - 翻訳はサーバーでレンダリング
-2. **バンドルサイズの削減** - 翻訳されたテキストを含む HTML のみが送信
-3. **SEO の向上** - 検索エンジンが完全に翻訳されたコンテンツを認識
-4. **初期読み込みの高速化** - クライアントサイドでの翻訳処理なし
+local 情報と message 情報は import し、getI18n 関数に引数として渡します。
 
 ## ベストプラクティス
 
@@ -168,8 +77,3 @@ export default function ProductPage({
   // localeとidの両方のパラメータを使用
 }
 ```
-
-## 次のステップ
-
-- [クライアントコンポーネント](/ja-jp/essentials/client-components)を学ぶ
-- [TypeScript サポート](/ja-jp/advanced/typescript-support)を探る

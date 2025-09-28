@@ -103,7 +103,7 @@ export default function Header() {
 
 ### 型安全性
 
-TypeScript がメッセージの完全な自動補完を提供することに注目してください：
+m は型が効いているので型補完やコードジャンプが可能です：
 
 ```typescript
 const { t, m } = useI18n(messages);
@@ -116,17 +116,7 @@ t(m.home.description);
 t(m.home.subtitle);
 ```
 
-### IDE ナビゲーション
-
-任意のメッセージ参照で F12 キーを押すと、その定義に直接ジャンプします：
-
 ```typescript
 // m.home.titleでF12キーを押すとメッセージ定義にジャンプ
 <h1>{t(m.home.title)}</h1>
 ```
-
-## 次のステップ
-
-- [メッセージフォーマット構文](/ja-jp/essentials/message-format-syntax)を学ぶ
-- [変数の補間](/ja-jp/essentials/interpolation)を探る
-- [TypeScript サポート](/ja-jp/advanced/typescript-support)を理解する

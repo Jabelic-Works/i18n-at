@@ -317,9 +317,3 @@ function measureTranslation<T>(name: string, fn: () => T): T {
 3. **Lazy load when appropriate** - Load messages as needed
 4. **Cache aggressively** - Cache both messages and translations
 5. **Monitor bundle impact** - Track how translations affect bundle size
-
-## Next Steps
-
-- Learn about [Lazy Loading](/advanced/lazy-loading)
-- Explore [TypeScript Support](/advanced/typescript-support)
-

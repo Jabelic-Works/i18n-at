@@ -96,24 +96,24 @@ export default defineConfig({
             },
           ],
         },
-        {
-          text: "Advanced",
-          items: [
-            {
-              text: "TypeScript Support",
-              link: "/advanced/typescript-support",
-            },
-            {
-              text: "Component Patterns",
-              link: "/advanced/component-patterns",
-            },
-            { text: "Lazy Loading", link: "/advanced/lazy-loading" },
-            {
-              text: "Performance Optimization",
-              link: "/advanced/optimization",
-            },
-          ],
-        },
+        // {
+        //   text: "Advanced",
+        //   items: [
+        //     {
+        //       text: "TypeScript Support",
+        //       link: "/advanced/typescript-support",
+        //     },
+        //     {
+        //       text: "Component Patterns",
+        //       link: "/advanced/component-patterns",
+        //     },
+        //     { text: "Lazy Loading", link: "/advanced/lazy-loading" },
+        //     {
+        //       text: "Performance Optimization",
+        //       link: "/advanced/optimization",
+        //     },
+        //   ],
+        // },
         {
           text: "API Reference",
           items: [
@@ -158,24 +158,24 @@ export default defineConfig({
             },
           ],
         },
-        {
-          text: "高度な使い方",
-          items: [
-            {
-              text: "TypeScript サポート",
-              link: "/ja-jp/advanced/typescript-support",
-            },
-            {
-              text: "コンポーネントパターン",
-              link: "/ja-jp/advanced/component-patterns",
-            },
-            { text: "遅延読み込み", link: "/ja-jp/advanced/lazy-loading" },
-            {
-              text: "パフォーマンス最適化",
-              link: "/ja-jp/advanced/optimization",
-            },
-          ],
-        },
+        // {
+        //   text: "高度な使い方",
+        //   items: [
+        //     {
+        //       text: "TypeScript サポート",
+        //       link: "/ja-jp/advanced/typescript-support",
+        //     },
+        //     {
+        //       text: "コンポーネントパターン",
+        //       link: "/ja-jp/advanced/component-patterns",
+        //     },
+        //     { text: "遅延読み込み", link: "/ja-jp/advanced/lazy-loading" },
+        //     {
+        //       text: "パフォーマンス最適化",
+        //       link: "/ja-jp/advanced/optimization",
+        //     },
+        //   ],
+        // },
         {
           text: "API リファレンス",
           items: [
@@ -194,7 +194,7 @@ export default defineConfig({
 
     footer: {
       message: "Released under the MIT License.",
-      copyright: "Copyright © 2024 Jabelic",
+      copyright: "Copyright © 2025 Jabelic",
     },
 
     search: {

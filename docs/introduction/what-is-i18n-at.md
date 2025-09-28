@@ -32,4 +32,3 @@ Built specifically for Next.js App Router:
 
 - **Server Components support** - Use translations in RSC
 - **Client Components support** - Hooks for client-side usage
-- **App Router optimized** - Follows Next.js best practices

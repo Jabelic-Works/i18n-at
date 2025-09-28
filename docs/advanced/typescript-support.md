@@ -385,8 +385,3 @@ function validateLocale<T extends Messages>(
 3. **Create type guards for dynamic access** - Safely handle dynamic message keys
 4. **Use generic components** - Build reusable, type-safe translation components
 5. **Extract configuration types** - Use utility types for locale management
-
-## Next Steps
-
-- Explore [Component Patterns](/advanced/component-patterns)
-- Learn about [Performance Optimization](/advanced/optimization)

@@ -1,10 +1,15 @@
 # Configuration
 
-Learn how to configure i18n-at for your application using `defineI18nConfig`.
+<div v-pre>
 
-## Basic Configuration
+## Type-Safe Locale Definition
 
-Use `defineI18nConfig` to define your application's internationalization settings:
+`defineI18nConfig` is a helper function that creates type-safe locale configurations. **Note: This only defines types and doesn't change any runtime behavior.**
+
+1. **Centralize configuration** - Keep all i18n settings in one place
+2. **Use meaningful locale codes** - `"en-US"` vs `"en"` based on your needs
+3. **Configure fallbacks** - Always set a fallback locale
+4. **Leverage type safety** - Use the generated types in your application
 
 ```typescript
 // i18nconfig.ts
@@ -20,11 +25,11 @@ export const i18nConfig = defineI18nConfig({
 });
 ```
 
-## Configuration Options
+## Type Definition Options
 
 ### locales
 
-Define the supported locales and their configurations:
+Define the supported locales for type inference:
 
 ```typescript
 export const i18nConfig = defineI18nConfig({
@@ -50,8 +55,6 @@ export const i18nConfig = defineI18nConfig({
 
 ### defaultLocale
 
-Specify which locale to use as the default:
-
 ```typescript
 export const i18nConfig = defineI18nConfig({
   locales: {
@@ -63,8 +66,6 @@ export const i18nConfig = defineI18nConfig({
 ```
 
 ### fallbackLocale
-
-Specify a fallback locale when the requested locale is not available:
 
 ```typescript
 export const i18nConfig = defineI18nConfig({
@@ -79,8 +80,6 @@ export const i18nConfig = defineI18nConfig({
 ```
 
 ### interpolationFormat
-
-Configure the interpolation format for message variables:
 
 ```typescript
 export const i18nConfig = defineI18nConfig({
@@ -192,14 +191,7 @@ const nextConfig = {
 export default nextConfig;
 ```
 
-## Best Practices
-
-1. **Centralize configuration** - Keep all i18n settings in one place
-2. **Use meaningful locale codes** - `"en-US"` vs `"en"` based on your needs
-3. **Configure fallbacks** - Always set a fallback locale
-4. **Leverage type safety** - Use the generated types in your application
-
-## Example: Complete Setup
+## Example: Complete Type Definition
 
 ```typescript
 // i18nconfig.ts
@@ -227,7 +219,4 @@ export type AppLocale = ExtractConfigLocales<typeof i18nConfig>;
 export type AppLocaleConfig = (typeof i18nConfig.locales)[AppLocale];
 ```
 
-## Next Steps
-
-- Learn about [Message Format Syntax](/essentials/message-format-syntax)
-- Explore [TypeScript Support](/advanced/typescript-support)
+</div>

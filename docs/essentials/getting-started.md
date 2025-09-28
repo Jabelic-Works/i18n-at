@@ -103,7 +103,7 @@ export default function Header() {
 
 ### Type Safety
 
-Notice how TypeScript provides full autocomplete for your messages:
+The `m` object is fully typed, enabling autocomplete and code navigation:
 
 ```typescript
 const { t, m } = useI18n(messages);
@@ -116,17 +116,7 @@ t(m.home.description);
 t(m.home.subtitle);
 ```
 
-### IDE Navigation
-
-Press F12 on any message reference to jump directly to its definition:
-
 ```typescript
 // F12 on m.home.title jumps to the message definition
 <h1>{t(m.home.title)}</h1>
 ```
-
-## Next Steps
-
-- Learn about [Message Format Syntax](/essentials/message-format-syntax)
-- Explore [Variable Interpolation](/essentials/interpolation)
-- Understand [TypeScript Support](/advanced/typescript-support)

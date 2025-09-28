@@ -87,7 +87,7 @@ Supported interpolation formats.
 type ExtractLocales<T> = T extends I18nConfig<infer U> ? keyof U : never;
 ```
 
-Extracts locale union type from configuration.
+Extracts locale union from configuration.
 
 ### ExtractDefaultLocale
 
@@ -110,9 +110,3 @@ type ExtractConfigLocales<T> = T extends ReturnType<
 ```
 
 Extracts locale union from `defineI18nConfig` result.
-
-## Next Steps
-
-- Explore [Core Functions](/api/core-functions)
-- Learn about [Server Functions](/api/server-functions)
-- Understand [Client Functions](/api/client-functions)

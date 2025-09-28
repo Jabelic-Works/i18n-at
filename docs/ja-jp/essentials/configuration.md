@@ -1,30 +1,19 @@
 # 設定
 
-`defineI18nConfig`を使用してアプリケーションの国際化設定を構成する方法を学びます。
+## 型安全なロケール定義
 
-## 基本設定
+`defineI18nConfig`は型安全なロケール設定を作成するヘルパー関数です。**注意：これは型定義のみを行い、実行時の動作は変更しません。**
 
-`defineI18nConfig`を使用してアプリケーションの国際化設定を定義します：
+1. **設定の一元化** - すべての国際化設定を一箇所にまとめる
+2. **意味のあるロケールコードの使用** - 必要に応じて `"en-US"` と `"en"` を区別するなど。
+3. **フォールバックの設定** - 必ずフォールバックロケールを設定する
+4. **型安全性の活用** - 生成された型をアプリケーションで使用する
 
-```typescript
-// i18nconfig.ts
-import { defineI18nConfig } from "i18n-at";
+という使用を想定しています。
 
-export const i18nConfig = defineI18nConfig({
-  locales: {
-    "en-US": { name: "English" },
-    "ja-JP": { name: "日本語" },
-    "zh-CN": { name: "中文" },
-  },
-  defaultLocale: "en-US",
-});
-```
+### オプション
 
-## 設定オプション
-
-### locales
-
-サポートするロケールとその設定を定義します：
+#### locales
 
 ```typescript
 export const i18nConfig = defineI18nConfig({
@@ -43,14 +32,7 @@ export const i18nConfig = defineI18nConfig({
 });
 ```
 
-#### LocaleConfig プロパティ
-
-- `name` (必須)：ロケールの表示名
-- `direction` (オプション)：テキストの方向 - `"ltr"`または`"rtl"`、デフォルトは`"ltr"`
-
-### defaultLocale
-
-デフォルトとして使用するロケールを指定します：
+#### defaultLocale
 
 ```typescript
 export const i18nConfig = defineI18nConfig({
@@ -58,13 +40,11 @@ export const i18nConfig = defineI18nConfig({
     en: { name: "English" },
     ja: { name: "日本語" },
   },
-  defaultLocale: "en", // ロケールキーの1つである必要があります
+  defaultLocale: "en",
 });
 ```
 
-### fallbackLocale
-
-要求されたロケールが利用できない場合のフォールバックロケールを指定します：
+#### fallbackLocale
 
 ```typescript
 export const i18nConfig = defineI18nConfig({
@@ -74,13 +54,11 @@ export const i18nConfig = defineI18nConfig({
     zh: { name: "中文" },
   },
   defaultLocale: "en",
-  fallbackLocale: "en", // ロケールが見つからない場合は英語にフォールバック
+  fallbackLocale: "en",
 });
 ```
 
-### interpolationFormat
-
-メッセージ変数の補間フォーマットを設定します：
+#### interpolationFormat
 
 ```typescript
 export const i18nConfig = defineI18nConfig({
@@ -95,14 +73,12 @@ export const i18nConfig = defineI18nConfig({
 
 #### 補間フォーマット
 
-- `"legacy"`: `{name}` - 従来のフォーマット
-- `"intl"`: `{$name}` - 現在の i18n-at フォーマット（推奨）
-- `"double"`: `{{name}}` - ダブルブレースフォーマット
-- `"none"`: 補間サポートなし
+- `"legacy"`: `{name}`
+- `"intl"`: `{$name}`
+- `"double"`: `{{name}}`
+- `"none"`: 補間なし
 
-## 生成されるプロパティ
-
-`defineI18nConfig`は自動的に有用なプロパティを生成します：
+### 生成されるプロパティ
 
 ```typescript
 export const i18nConfig = defineI18nConfig({
@@ -120,7 +96,7 @@ i18nConfig.isValidLocale("fr"); // false
 i18nConfig.getLocaleConfig("en"); // { name: "English" }
 ```
 
-### localeKeys
+#### localeKeys
 
 定義されたすべてのロケールキーの配列：
 
@@ -129,7 +105,7 @@ const supportedLocales = i18nConfig.localeKeys;
 // ["en-US", "ja-JP", "zh-CN"]
 ```
 
-### isValidLocale
+#### isValidLocale
 
 ロケールがサポートされているかをチェックする型ガード関数：
 
@@ -146,18 +122,16 @@ function handleLocale(locale: string) {
 }
 ```
 
-### getLocaleConfig
+#### getLocaleConfig
 
 特定のロケールの設定を取得：
 
 ```typescript
 const enConfig = i18nConfig.getLocaleConfig("en-US");
-// { name: "English", direction: "ltr" }
+// { name: "English" }
 ```
 
 ## 型安全性
-
-設定は完全な型安全性を提供します：
 
 ```typescript
 // ロケール型を抽出
@@ -173,61 +147,3 @@ function translate(locale: SupportedLocale, key: string) {
 translate("en-US", "welcome"); // ✅ 有効
 translate("fr-FR", "welcome"); // ❌ TypeScriptエラー
 ```
-
-## Next.js との統合
-
-設定を Next.js ルーティングと組み合わせて使用：
-
-```typescript
-// next.config.js
-import { i18nConfig } from "./i18nconfig";
-
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  // すべてのロケール用の静的ページを生成
-  generateStaticParams: () =>
-    i18nConfig.localeKeys.map((locale) => ({ locale })),
-};
-
-export default nextConfig;
-```
-
-## ベストプラクティス
-
-1. **設定を一元化** - すべての i18n 設定を 1 か所にまとめる
-2. **意味のあるロケールコードを使用** - 必要に応じて`"en-US"`vs`"en"`
-3. **フォールバックを設定** - 常にフォールバックロケールを設定
-4. **型安全性を活用** - 生成された型をアプリケーションで使用
-
-## 例：完全なセットアップ
-
-```typescript
-// i18nconfig.ts
-import { defineI18nConfig } from "i18n-at";
-
-export const i18nConfig = defineI18nConfig({
-  locales: {
-    en: {
-      name: "English",
-    },
-    ja: {
-      name: "日本語",
-    },
-    ar: {
-      name: "العربية",
-    },
-  },
-  defaultLocale: "en",
-  fallbackLocale: "en",
-  interpolationFormat: "intl",
-});
-
-// アプリ全体で使用するための型をエクスポート
-export type AppLocale = ExtractConfigLocales<typeof i18nConfig>;
-export type AppLocaleConfig = (typeof i18nConfig.locales)[AppLocale];
-```
-
-## 次のステップ
-
-- [メッセージフォーマット構文](/ja-jp/essentials/message-format-syntax)を学ぶ
-- [TypeScript サポート](/ja-jp/advanced/typescript-support)を探る

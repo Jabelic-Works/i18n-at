@@ -120,9 +120,3 @@ You now have a fully type-safe internationalization setup! The key benefits you'
 - ✅ **Co-location** - Messages are defined where they're used
 - ✅ **Auto-completion** - Full IntelliSense support for all your messages
 <!--
-
-## Next Steps
-
-- [Learn about the API Reference](/api-reference.md)
-- [Understand why co-location matters](/why-this-library)
-- [Explore advanced usage patterns](/advanced-usage.md) -->

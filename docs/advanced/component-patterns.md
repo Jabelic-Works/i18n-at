@@ -307,9 +307,3 @@ function EditProfile() {
 2. **Share common messages** - Extract frequently used messages
 3. **Use composition** - Combine message sets when needed
 4. **Type your patterns** - Ensure type safety in advanced patterns
-
-## Next Steps
-
-- Learn about [Performance Optimization](/advanced/optimization)
-- Explore [Lazy Loading](/advanced/lazy-loading)
-

@@ -110,9 +110,3 @@ type ExtractConfigLocales<T> = T extends ReturnType<
 ```
 
 `defineI18nConfig`の結果からロケールのユニオンを抽出します。
-
-## 次のステップ
-
-- [コア関数](/ja-jp/api/core-functions)を探る
-- [サーバー関数](/ja-jp/api/server-functions)を学ぶ
-- [クライアント関数](/ja-jp/api/client-functions)を理解する
