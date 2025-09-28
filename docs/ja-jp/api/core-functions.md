@@ -127,16 +127,3 @@ const { messages } = defineMessages({
 const enMessages = at("en", messages); // { welcome: "Welcome!" }
 const jaMessages = at("ja", messages); // { welcome: "ようこそ！" }
 ```
-
-## ベストプラクティス
-
-1. **モジュールレベルでメッセージを定義** - コンポーネント内でのメッセージ定義は避ける
-2. **const assertions を使用** - 必要に応じてより厳密な型チェックのために
-3. **機能ごとに整理** - 関連するメッセージをグループ化
-4. **可能な限りメッセージを平坦に** - 深いネストはメッセージの管理を困難にする
-
-## 次のステップ
-
-- [サーバー関数](/ja-jp/api/server-functions)を学ぶ
-- [クライアント関数](/ja-jp/api/client-functions)を探る
-- [型定義](/ja-jp/api/types)を理解する

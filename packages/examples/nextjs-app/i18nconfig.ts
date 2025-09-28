@@ -1,4 +1,4 @@
-import { defineI18nConfig } from "i18n-at";
+import { defineI18nConfig, ExtractConfigLocales } from "i18n-at";
 
 export const i18nConfig = defineI18nConfig({
   locales: {

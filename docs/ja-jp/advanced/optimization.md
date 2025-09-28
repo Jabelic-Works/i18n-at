@@ -317,8 +317,3 @@ function measureTranslation<T>(name: string, fn: () => T): T {
 3. **適切な場合は遅延読み込み** - 必要に応じてメッセージを読み込み
 4. **積極的にキャッシュ** - メッセージと翻訳の両方をキャッシュ
 5. **バンドルへの影響を監視** - 翻訳がバンドルサイズに与える影響を追跡
-
-## 次のステップ
-
-- [遅延読み込み](/ja-jp/advanced/lazy-loading)を学ぶ
-- [TypeScript サポート](/ja-jp/advanced/typescript-support)を探る

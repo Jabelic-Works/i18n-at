@@ -251,8 +251,3 @@ export async function getCachedMessages(locale: string, feature: string) {
 2. **コード分割を使用** - バンドラーにチャンクサイズを最適化させる
 3. **バンドルサイズを監視** - 翻訳がバンドルサイズに与える影響を追跡
 4. **SSG/SSR を検討** - 可能な場合は翻訳されたコンテンツをサーバーレンダリング
-
-## 次のステップ
-
-- [パフォーマンス最適化](/ja-jp/advanced/optimization)を学ぶ
-- [コンポーネントパターン](/ja-jp/advanced/component-patterns)を探る

@@ -1,7 +1,5 @@
 # Server Components
 
-Learn how to use i18n-at with Next.js Server Components for optimal performance.
-
 ## Basic Usage
 
 In Server Components, use the `getI18n` function:
@@ -27,96 +25,7 @@ export default function Page({
 }
 ```
 
-## Async Components
-
-Server Components can be async, allowing you to fetch data alongside translations:
-
-```typescript
-import { getI18n } from "i18n-at";
-import { messages } from "@/messages";
-
-export default async function ProductPage({
-  params: { locale, id },
-}: {
-  params: { locale: string; id: string };
-}) {
-  const { t, m } = getI18n(messages, locale);
-
-  // Fetch data in parallel with preparing translations
-  const product = await fetchProduct(id);
-
-  return (
-    <div>
-      <h1>{t(m.product.title, { name: product.name })}</h1>
-      <p>{t(m.product.price, { amount: product.price })}</p>
-    </div>
-  );
-}
-```
-
-## Layout Components
-
-Use translations in layout components:
-
-```typescript
-// app/[locale]/layout.tsx
-import { getI18n } from "i18n-at";
-import { messages } from "@/messages";
-
-export default function LocaleLayout({
-  children,
-  params: { locale },
-}: {
-  children: React.ReactNode;
-  params: { locale: string };
-}) {
-  const { t, m } = getI18n(messages, locale);
-
-  return (
-    <div>
-      <header>
-        <h1>{t(m.app.title)}</h1>
-      </header>
-      <main>{children}</main>
-      <footer>
-        <p>{t(m.app.copyright)}</p>
-      </footer>
-    </div>
-  );
-}
-```
-
-## Metadata
-
-Generate localized metadata for SEO:
-
-```typescript
-import { Metadata } from "next";
-import { getI18n } from "i18n-at";
-import { messages } from "@/messages";
-
-export async function generateMetadata({
-  params: { locale },
-}: {
-  params: { locale: string };
-}): Promise<Metadata> {
-  const { t, m } = getI18n(messages, locale);
-
-  return {
-    title: t(m.meta.title),
-    description: t(m.meta.description),
-  };
-}
-```
-
-## Performance Benefits
-
-Server Components with i18n-at provide several performance advantages:
-
-1. **No JavaScript sent to client** - Translations are rendered on the server
-2. **Reduced bundle size** - Only the HTML with translated text is sent
-3. **Better SEO** - Search engines see the fully translated content
-4. **Faster initial load** - No client-side translation processing
+Import locale information and message information, and pass them as arguments to the getI18n function.
 
 ## Best Practices
 
@@ -125,16 +34,16 @@ Server Components with i18n-at provide several performance advantages:
 When possible, use Server Components for static translated content:
 
 ```typescript
-// ✅ Good - Server Component for static content
+// ✅ Good example - Server Component for static content
 export default function AboutPage({ params: { locale } }) {
   const { t, m } = getI18n(messages, locale);
   return <article>{t(m.about.content)}</article>;
 }
 ```
 
-### 2. Co-locate Messages
+### 2. Message Co-location
 
-Keep messages close to where they're used:
+Place messages near their usage:
 
 ```typescript
 // about/messages.ts
@@ -153,9 +62,9 @@ export default function AboutPage({ params: { locale } }) {
 }
 ```
 
-### 3. Handle Dynamic Routes
+### 3. Dynamic Route Handling
 
-For dynamic routes, ensure locale is properly handled:
+In dynamic routes, ensure locale is handled properly:
 
 ```typescript
 // app/[locale]/products/[id]/page.tsx
@@ -168,9 +77,3 @@ export default function ProductPage({
   // Use both locale and id parameters
 }
 ```
-
-## Next Steps
-
-- Learn about [Client Components](/essentials/client-components)
-- Explore [TypeScript Support](/advanced/typescript-support)
-

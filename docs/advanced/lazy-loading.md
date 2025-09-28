@@ -251,9 +251,3 @@ export async function getCachedMessages(locale: string, feature: string) {
 2. **Use code splitting** - Let bundlers optimize chunk sizes
 3. **Monitor bundle size** - Track the impact of translations
 4. **Consider SSG/SSR** - Server-render translated content when possible
-
-## Next Steps
-
-- Learn about [Performance Optimization](/advanced/optimization)
-- Explore [Component Patterns](/advanced/component-patterns)
-

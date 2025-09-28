@@ -27,24 +27,3 @@ yarn add i18n-at
 ```bash
 pnpm add i18n-at
 ```
-
-## Project Structure
-
-After installation, you'll typically organize your project like this:
-
-```
-src/
-├── app/
-│   ├── [locale]/
-│   │   ├── layout.tsx
-│   │   └── page.tsx
-│   └── layout.tsx
-├── components/
-│   └── Dashboard.tsx
-└── messages.ts    # Your message definitions
-```
-
-## Next Steps
-
-Now that you have i18n-at installed, proceed to the [Getting Started](/essentials/getting-started) guide to set up your first internationalized page.
-

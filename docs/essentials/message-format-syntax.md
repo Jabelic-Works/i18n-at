@@ -1,116 +1,41 @@
 # Message Format Syntax
 
-i18n-at uses a simple yet powerful syntax for defining messages with variable interpolation.
+<div v-pre>
 
-## Basic Messages
+## Variable Placeholders
 
-Simple text messages without any variables:
-
-```typescript
-const { messages } = defineMessages({
-  en: {
-    greeting: "Hello, world!",
-    farewell: "Goodbye!",
-  },
-  ja: {
-    greeting: "こんにちは、世界！",
-    farewell: "さようなら！",
-  },
-});
-```
-
-## Variable Interpolation
-
-Use `{$variableName}` to include dynamic values:
+To include dynamic values, use `{$variableName}` syntax:
 
 ```typescript
 const { messages } = defineMessages({
   en: {
     welcome: "Welcome, {$name}!",
-    itemCount: "You have {$count} items in your cart",
+    notification: "You have {$count} new messages",
   },
   ja: {
     welcome: "{$name}さん、ようこそ！",
-    itemCount: "カートに{$count}個のアイテムがあります",
+    notification: "新しいメッセージが{$count}件あります",
   },
 });
-
-// Usage
-const { t, m } = useI18n(messages);
-
-t(m.welcome, { name: "Alice" }); // "Welcome, Alice!"
-t(m.itemCount, { count: 5 }); // "You have 5 items in your cart"
 ```
 
-## Multiple Variables
+### Brace Escaping
 
-You can use multiple variables in a single message:
+When you need to display actual brace characters in your output, double the braces:
 
 ```typescript
 const { messages } = defineMessages({
   en: {
-    orderSummary: "Order #{$orderId} for {$customerName} - Total: ${$total}",
+    syntaxHelp: "Use {{$variable}} for interpolation",
+    jsObject: "const obj = {{ key: value }};",
+    cssRule: "body {{ margin: 0; }}",
   },
   ja: {
-    orderSummary:
-      "注文番号: {$orderId} / お客様: {$customerName} / 合計: {$total}円",
+    syntaxHelp: "補間には{{$variable}}を使用してください",
+    jsObject: "const obj = {{ key: value }};",
+    cssRule: "body {{ margin: 0; }}",
   },
 });
-
-// Usage
-t(m.orderSummary, {
-  orderId: "12345",
-  customerName: "John Doe",
-  total: "99.99",
-});
-// "Order #12345 for John Doe - Total: $99.99"
 ```
 
-## Escaping Braces
-
-If you need to include literal braces in your messages, double them:
-
-```typescript
-const { messages } = defineMessages({
-  en: {
-    code: "Use {{$variable}} for interpolation",
-  },
-});
-
-// Output: "Use {$variable} for interpolation"
-```
-
-## Type Safety
-
-TypeScript ensures you provide all required variables:
-
-```typescript
-const { messages } = defineMessages({
-  en: {
-    greeting: "Hello, {$name}! You have {$count} messages.",
-  },
-});
-
-const { t, m } = useI18n(messages);
-
-// ❌ TypeScript error - missing required parameters
-t(m.greeting);
-
-// ❌ TypeScript error - missing 'count' parameter
-t(m.greeting, { name: "Alice" });
-
-// ✅ All parameters provided
-t(m.greeting, { name: "Alice", count: 5 });
-```
-
-## Best Practices
-
-1. **Use descriptive variable names**: `{$userName}` instead of `{$u}`
-2. **Keep messages concise**: Break long messages into multiple keys
-3. **Avoid HTML in messages**: Use component composition instead
-4. **Be consistent with naming**: Use the same variable names across locales
-
-<!-- ## Next Steps
-
-- Learn about [Variable Interpolation](/essentials/interpolation)
-- Explore [TypeScript Support](/advanced/typescript-support) -->
+</div>

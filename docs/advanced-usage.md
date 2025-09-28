@@ -441,11 +441,3 @@ const { messages } = defineMessages({
   }),
 });
 ```
-
-## Next Steps
-
-Now that you've mastered advanced usage patterns:
-
-- [Check out the API Reference](/api-reference) for complete documentation
-- [Learn why co-location matters](/why-this-library) for the philosophy behind i18n-at
-- [Start with the Quick Start guide](/quick-start) if you're new to i18n-at
