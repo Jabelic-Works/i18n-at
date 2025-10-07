@@ -1,18 +1,7 @@
 name: Core Package CI
 
 on:
-  push:
-    paths:
-      - "packages/core/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
-      - ".github/workflows/core-ci.yml"
-  pull_request:
-    paths:
-      - "packages/core/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
-      - ".github/workflows/core-ci.yml"
+  workflow_call:
 
 jobs:
   test:
