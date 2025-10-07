@@ -1,18 +1,7 @@
 name: Documentation CI
 
 on:
-  push:
-    paths:
-      - "docs/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
-      - ".github/workflows/docs-ci.yml"
-  pull_request:
-    paths:
-      - "docs/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
-      - ".github/workflows/docs-ci.yml"
+  workflow_call:
 
 jobs:
   build:
