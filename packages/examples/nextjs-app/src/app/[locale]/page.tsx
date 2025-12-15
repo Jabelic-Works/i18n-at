@@ -5,20 +5,13 @@ import Navigation from "@/components/Navigation";
 import { I18nClientProvider } from "i18n-at/client";
 import { getI18n } from "i18n-at/server";
 import { i18nConfig } from "../../../i18nconfig";
-import { notFound } from "next/navigation";
-
-function isAppLocale(locale: string): locale is AppLocale {
-  return Object.prototype.hasOwnProperty.call(messages, locale);
-}
 
 export default async function Page({
   params,
 }: {
-  // Next の `PageProps` は params を `string` 扱いにするため、ここで絞り込む
-  params: Promise<{ locale: string }>;
+  params: Promise<{ locale: AppLocale }>;
 }) {
   const { locale } = await params;
-  if (!isAppLocale(locale)) notFound();
   const { t, m } = getI18n(messages, locale, i18nConfig.interpolationFormat);
 
   return (
