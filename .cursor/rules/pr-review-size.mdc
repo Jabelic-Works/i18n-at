@@ -1,0 +1,11 @@
+---
+description: Keep pull requests small and reviewable
+alwaysApply: true
+---
+
+# Pull Request Size
+
+- `lock file` を除き、各 `Pull Request` は変更行数がおおむね `300` 行前後に収まるようにする。
+- 初回の `Pull Request` でも同じサイズ目標を適用する。
+- このサイズを明確に超えそうな場合は、セットアップ、足場づくり、後続変更を別の `Pull Request` に分割する。
+- 作業分解では、レビューしやすい小さな `Pull Request` を優先する。
