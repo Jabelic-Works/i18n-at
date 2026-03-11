@@ -1,0 +1,11 @@
+---
+description: Keep pull requests small and reviewable
+alwaysApply: true
+---
+
+# Pull Request Size
+
+- Excluding `lock file` changes, each `Pull Request` should usually stay around `300` changed lines.
+- Apply the same size target to the initial `Pull Request`.
+- If a change would clearly exceed that target, split setup, scaffolding, and follow-up work into separate `Pull Request`s.
+- When planning work, prefer small `Pull Request`s that are easy to review.
