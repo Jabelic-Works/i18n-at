@@ -70,6 +70,10 @@ export default defineConfig({
           text: "Introduction",
           items: [
             { text: "What is i18n-at?", link: "/introduction/what-is-i18n-at" },
+            {
+              text: "Why Co-location Scales",
+              link: "/introduction/why-co-location-scales",
+            },
             { text: "Installation", link: "/introduction/installation" },
           ],
         },
@@ -131,6 +135,10 @@ export default defineConfig({
             {
               text: "i18n-atとは？",
               link: "/ja-jp/introduction/what-is-i18n-at",
+            },
+            {
+              text: "コロケーションがスケールする理由",
+              link: "/ja-jp/introduction/why-co-location-scales",
             },
             { text: "インストール", link: "/ja-jp/introduction/installation" },
           ],

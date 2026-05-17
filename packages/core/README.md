@@ -53,12 +53,13 @@ function Dashboard() {
 
 For complete documentation, examples, and guides, visit our documentation site:
 
-**[📚 View Full Documentation →](docs/)**
+**[📚 View Full Documentation →](../../docs/)**
 
-- [🚀 Quick Start Guide](docs/quick-start.md) - Get started in minutes
-- [📚 API Reference](docs/api-reference.md) - Complete API documentation
-- [🎯 Why i18n-at?](docs/why-this-library.md) - Understanding the benefits
-- [🔧 Advanced Usage](docs/advanced-usage.md) - Advanced patterns and techniques
+- [🚀 Quick Start Guide](../../docs/quick-start.md) - Get started in minutes
+- [📚 API Reference](../../docs/api-reference.md) - Complete API documentation
+- [🎯 Why i18n-at?](../../docs/why-this-library.md) - Understanding the benefits
+- [🏗️ Why Co-location Scales](../../docs/introduction/why-co-location-scales.md) - Tradeoffs and why this model works in larger codebases
+- [🔧 Advanced Usage](../../docs/advanced-usage.md) - Advanced patterns and techniques
 
 ## 🎯 Why This Library?
 
