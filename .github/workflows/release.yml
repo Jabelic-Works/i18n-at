@@ -29,6 +29,10 @@ permissions:
   packages: write
   pull-requests: write
 
+concurrency:
+  group: release-workflow
+  cancel-in-progress: false
+
 jobs:
   prepare-release-pr:
     if: ${{ github.event_name == 'workflow_dispatch' }}
@@ -128,7 +132,7 @@ jobs:
           git checkout -b "$BRANCH_NAME"
           git add packages/core/package.json package.json
           git commit -m "chore: bump version to $TAG_NAME"
-          git push --force-with-lease origin "$BRANCH_NAME"
+          git push origin "$BRANCH_NAME"
 
           PR_NUMBER=$(gh pr list \
             --repo "$GITHUB_REPOSITORY" \
@@ -174,24 +178,42 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
+      - name: Check release commit
+        id: release_commit
+        run: |
+          SUBJECT=$(git log -1 --pretty=%s)
+
+          if [[ "$SUBJECT" =~ ^Merge\ pull\ request\ #[0-9]+\ from\ .*/release/v[0-9]+\.[0-9]+\.[0-9]+$ ]] || [[ "$SUBJECT" =~ ^chore:\ release\ v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "should_continue=true" >> "$GITHUB_OUTPUT"
+            echo "Release commit detected: $SUBJECT"
+          else
+            echo "should_continue=false" >> "$GITHUB_OUTPUT"
+            echo "Not a release commit. Skipping publish flow: $SUBJECT"
+          fi
+
       - name: Setup Node.js
+        if: ${{ steps.release_commit.outputs.should_continue == 'true' }}
         uses: actions/setup-node@v6
         with:
           node-version: "24"
           registry-url: "https://registry.npmjs.org"
 
       - name: Setup pnpm
+        if: ${{ steps.release_commit.outputs.should_continue == 'true' }}
         uses: pnpm/action-setup@v4
         with:
           version: 10.12.4
 
       - name: Install dependencies
+        if: ${{ steps.release_commit.outputs.should_continue == 'true' }}
         run: pnpm install --frozen-lockfile
 
       - name: Build packages
+        if: ${{ steps.release_commit.outputs.should_continue == 'true' }}
         run: pnpm build
 
       - name: Get release version
+        if: ${{ steps.release_commit.outputs.should_continue == 'true' }}
         id: release_version
         run: |
           VERSION=$(node -p "require('./packages/core/package.json').version")
@@ -201,6 +223,7 @@ jobs:
           echo "tag_name=$TAG_NAME" >> "$GITHUB_OUTPUT"
 
       - name: Check release availability
+        if: ${{ steps.release_commit.outputs.should_continue == 'true' }}
         id: release_check
         run: |
           TAG_NAME="${{ steps.release_version.outputs.tag_name }}"
@@ -254,13 +277,17 @@ jobs:
       - name: Summary
         run: |
           echo "## Release Summary" >> "$GITHUB_STEP_SUMMARY"
-          echo "* **Version:** ${{ steps.release_version.outputs.version }}" >> "$GITHUB_STEP_SUMMARY"
-          echo "* **Tag:** ${{ steps.release_version.outputs.tag_name }}" >> "$GITHUB_STEP_SUMMARY"
 
-          if [ "${{ steps.release_check.outputs.should_release }}" = "true" ]; then
+          if [ "${{ steps.release_commit.outputs.should_continue }}" != "true" ]; then
+            echo "* **Status:** Publish skipped because this push is not a release merge." >> "$GITHUB_STEP_SUMMARY"
+          elif [ "${{ steps.release_check.outputs.should_release }}" = "true" ]; then
+            echo "* **Version:** ${{ steps.release_version.outputs.version }}" >> "$GITHUB_STEP_SUMMARY"
+            echo "* **Tag:** ${{ steps.release_version.outputs.tag_name }}" >> "$GITHUB_STEP_SUMMARY"
             echo "* **Status:** Release completed successfully." >> "$GITHUB_STEP_SUMMARY"
             echo "* **GitHub Release:** https://github.com/${{ github.repository }}/releases/tag/${{ steps.release_version.outputs.tag_name }}" >> "$GITHUB_STEP_SUMMARY"
             echo "* **npm Package:** https://www.npmjs.com/package/i18n-at/v/${{ steps.release_version.outputs.version }}" >> "$GITHUB_STEP_SUMMARY"
           else
+            echo "* **Version:** ${{ steps.release_version.outputs.version }}" >> "$GITHUB_STEP_SUMMARY"
+            echo "* **Tag:** ${{ steps.release_version.outputs.tag_name }}" >> "$GITHUB_STEP_SUMMARY"
             echo "* **Status:** Release skipped because the tag or npm version already exists." >> "$GITHUB_STEP_SUMMARY"
           fi
