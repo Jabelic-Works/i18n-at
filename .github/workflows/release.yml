@@ -257,22 +257,30 @@ jobs:
           VERSION="${{ steps.release_version.outputs.version }}"
 
           if git ls-remote --exit-code --tags origin "refs/tags/$TAG_NAME" >/dev/null 2>&1; then
-            echo "should_release=false" >> "$GITHUB_OUTPUT"
-            echo "Tag $TAG_NAME already exists. Skipping release."
-            exit 0
+            echo "tag_exists=true" >> "$GITHUB_OUTPUT"
+            echo "Tag $TAG_NAME already exists. Reusing it."
+          else
+            echo "tag_exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          if gh release view "$TAG_NAME" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "github_release_exists=true" >> "$GITHUB_OUTPUT"
+            echo "GitHub Release $TAG_NAME already exists. Reusing it."
+          else
+            echo "github_release_exists=false" >> "$GITHUB_OUTPUT"
           fi
 
           if npm view i18n-at@"$VERSION" version >/dev/null 2>&1; then
-            echo "should_release=false" >> "$GITHUB_OUTPUT"
+            echo "should_publish=false" >> "$GITHUB_OUTPUT"
             echo "Version $VERSION already exists on npm. Skipping release."
             exit 0
           fi
 
-          echo "should_release=true" >> "$GITHUB_OUTPUT"
-          echo "Version $VERSION is ready to release."
+          echo "should_publish=true" >> "$GITHUB_OUTPUT"
+          echo "Version $VERSION is ready to publish."
 
       - name: Create Git tag
-        if: ${{ steps.release_check.outputs.should_release == 'true' }}
+        if: ${{ steps.release_check.outputs.should_publish == 'true' && steps.release_check.outputs.tag_exists != 'true' }}
         run: |
           TAG_NAME="${{ steps.release_version.outputs.tag_name }}"
 
@@ -282,7 +290,7 @@ jobs:
           git push origin "refs/tags/$TAG_NAME"
 
       - name: Create GitHub Release
-        if: ${{ steps.release_check.outputs.should_release == 'true' }}
+        if: ${{ steps.release_check.outputs.should_publish == 'true' && steps.release_check.outputs.github_release_exists != 'true' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -294,7 +302,7 @@ jobs:
             --notes "Automated release for $TAG_NAME."
 
       - name: Publish to npm
-        if: ${{ steps.release_check.outputs.should_release == 'true' }}
+        if: ${{ steps.release_check.outputs.should_publish == 'true' }}
         run: |
           cd packages/core
           npm publish --access public
@@ -307,7 +315,7 @@ jobs:
 
           if [ "${{ steps.release_commit.outputs.should_continue }}" != "true" ]; then
             echo "* **Status:** Publish skipped because this push is not a release merge." >> "$GITHUB_STEP_SUMMARY"
-          elif [ "${{ steps.release_check.outputs.should_release }}" = "true" ]; then
+          elif [ "${{ steps.release_check.outputs.should_publish }}" = "true" ]; then
             echo "* **Version:** ${{ steps.release_version.outputs.version }}" >> "$GITHUB_STEP_SUMMARY"
             echo "* **Tag:** ${{ steps.release_version.outputs.tag_name }}" >> "$GITHUB_STEP_SUMMARY"
             echo "* **Status:** Release completed successfully." >> "$GITHUB_STEP_SUMMARY"
@@ -316,5 +324,5 @@ jobs:
           else
             echo "* **Version:** ${{ steps.release_version.outputs.version }}" >> "$GITHUB_STEP_SUMMARY"
             echo "* **Tag:** ${{ steps.release_version.outputs.tag_name }}" >> "$GITHUB_STEP_SUMMARY"
-            echo "* **Status:** Release skipped because the tag or npm version already exists." >> "$GITHUB_STEP_SUMMARY"
+            echo "* **Status:** Release skipped because the npm version already exists." >> "$GITHUB_STEP_SUMMARY"
           fi
