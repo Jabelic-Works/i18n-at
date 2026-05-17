@@ -252,6 +252,8 @@ jobs:
       - name: Check release availability
         if: ${{ steps.release_commit.outputs.should_continue == 'true' }}
         id: release_check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG_NAME="${{ steps.release_version.outputs.tag_name }}"
           VERSION="${{ steps.release_version.outputs.version }}"
