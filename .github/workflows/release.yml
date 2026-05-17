@@ -13,17 +13,25 @@ on:
           - minor
           - major
       dry_run:
-        description: "Dry run (no actual release)"
+        description: "Dry run (no actual release PR)"
         required: false
         default: false
         type: boolean
+  push:
+    branches:
+      - main
+    paths:
+      - package.json
+      - packages/core/package.json
 
 permissions:
   contents: write
   packages: write
+  pull-requests: write
 
 jobs:
-  release:
+  prepare-release-pr:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -58,20 +66,19 @@ jobs:
         id: current_version
         run: |
           CURRENT_VERSION=$(node -p "require('./packages/core/package.json').version")
-          echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "current=$CURRENT_VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Check if version already exists on npm
+      - name: Check if current version exists on npm
         id: version_check
         run: |
           CURRENT_VERSION=$(node -p "require('./packages/core/package.json').version")
 
-          # npmでバージョンをチェック
-          if npm view i18n-at@$CURRENT_VERSION version 2>/dev/null; then
-            echo "version_exists=true" >> $GITHUB_OUTPUT
-            echo "⚠️ Version $CURRENT_VERSION already exists on npm"
+          if npm view i18n-at@"$CURRENT_VERSION" version >/dev/null 2>&1; then
+            echo "version_exists=true" >> "$GITHUB_OUTPUT"
+            echo "Version $CURRENT_VERSION already exists on npm"
           else
-            echo "version_exists=false" >> $GITHUB_OUTPUT
-            echo "✅ Version $CURRENT_VERSION is available"
+            echo "version_exists=false" >> "$GITHUB_OUTPUT"
+            echo "Version $CURRENT_VERSION is available"
           fi
 
       - name: Bump version
@@ -79,32 +86,23 @@ jobs:
         run: |
           cd packages/core
 
-          # 現在のバージョンが既にnpmに存在する場合は、強制的にバージョンアップ
           if [ "${{ steps.version_check.outputs.version_exists }}" = "true" ] && [ "${{ inputs.dry_run }}" = "false" ]; then
-            echo "⚠️ Current version already exists on npm. Forcing version bump..."
+            echo "Current version already exists on npm. Preparing the next ${{ inputs.version_type }} version."
           fi
 
-          if [ "${{ inputs.dry_run }}" = "true" ]; then
-            NEW_VERSION=$(npm version ${{ inputs.version_type }} --no-git-tag-version --preid=beta)
-            echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
-            echo "🔍 Dry run - would bump to version: $NEW_VERSION"
-            git checkout -- package.json
-          else
-            NEW_VERSION=$(npm version ${{ inputs.version_type }} --no-git-tag-version)
-            echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
-            echo "✅ Version bumped to: $NEW_VERSION"
-            
-            # 新しいバージョンがnpmに既に存在するかチェック
-            NEW_VERSION_CLEAN=$(echo $NEW_VERSION | sed 's/^v//')
-            if npm view i18n-at@$NEW_VERSION_CLEAN version 2>/dev/null; then
-              echo "❌ Error: New version $NEW_VERSION already exists on npm!"
-              echo "Please choose a different version type or manually update the version."
-              exit 1
-            fi
+          NEW_VERSION=$(npm version ${{ inputs.version_type }} --no-git-tag-version)
+          NEW_VERSION_CLEAN=${NEW_VERSION#v}
+
+          echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+          echo "new_version_clean=$NEW_VERSION_CLEAN" >> "$GITHUB_OUTPUT"
+          echo "Version bumped to: $NEW_VERSION"
+
+          if npm view i18n-at@"$NEW_VERSION_CLEAN" version >/dev/null 2>&1; then
+            echo "Error: New version $NEW_VERSION already exists on npm."
+            exit 1
           fi
 
       - name: Update root package.json version
-        if: ${{ !inputs.dry_run }}
         run: |
           CORE_VERSION=$(node -p "require('./packages/core/package.json').version")
           node -e "
@@ -114,75 +112,155 @@ jobs:
             fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2) + '\n');
           "
 
-      - name: Commit version changes
-        if: ${{ !inputs.dry_run }}
+      - name: Restore dry run changes
+        if: ${{ inputs.dry_run }}
         run: |
-          git add packages/core/package.json package.json
-          git commit -m "chore: bump version to ${{ steps.version_bump.outputs.new_version }}"
+          git checkout -- package.json packages/core/package.json
 
-      - name: Create Git tag
+      - name: Create release pull request
         if: ${{ !inputs.dry_run }}
-        run: |
-          TAG_NAME="${{ steps.version_bump.outputs.new_version }}"
-          git tag -a "$TAG_NAME" -m "Release $TAG_NAME"
-          git push origin HEAD --tags
-
-      - name: Create GitHub Release
-        if: ${{ !inputs.dry_run }}
-        uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.version_bump.outputs.new_version }}
-          release_name: Release ${{ steps.version_bump.outputs.new_version }}
-          body: |
-            ## Changes in ${{ steps.version_bump.outputs.new_version }}
-
-            * Automated release from ${{ steps.current_version.outputs.current }} to ${{ steps.version_bump.outputs.new_version }}
-
-            For detailed changes, see the commit history.
-          draft: false
-          prerelease: false
-
-      - name: Check if new version exists on npm
-        if: ${{ !inputs.dry_run }}
-        id: final_version_check
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_NAME: ${{ steps.version_bump.outputs.new_version }}
         run: |
-          NEW_VERSION_CLEAN=$(echo "${{ steps.version_bump.outputs.new_version }}" | sed 's/^v//')
-          if npm view i18n-at@$NEW_VERSION_CLEAN version 2>/dev/null; then
-            echo "should_publish=false" >> $GITHUB_OUTPUT
-            echo "⚠️ Version $NEW_VERSION_CLEAN already exists on npm. Skipping publish."
+          BRANCH_NAME="release/$TAG_NAME"
+
+          git checkout -b "$BRANCH_NAME"
+          git add packages/core/package.json package.json
+          git commit -m "chore: bump version to $TAG_NAME"
+          git push --force-with-lease origin "$BRANCH_NAME"
+
+          PR_NUMBER=$(gh pr list \
+            --repo "$GITHUB_REPOSITORY" \
+            --head "$BRANCH_NAME" \
+            --json number \
+            --jq '.[0].number // empty')
+
+          if [ -n "$PR_NUMBER" ]; then
+            gh pr edit "$PR_NUMBER" \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "chore: release $TAG_NAME" \
+              --body "Bumps package versions for $TAG_NAME. Merge this PR to publish the release."
           else
-            echo "should_publish=true" >> $GITHUB_OUTPUT
-            echo "✅ Version $NEW_VERSION_CLEAN is ready to publish."
+            gh pr create \
+              --repo "$GITHUB_REPOSITORY" \
+              --base main \
+              --head "$BRANCH_NAME" \
+              --title "chore: release $TAG_NAME" \
+              --body "Bumps package versions for $TAG_NAME. Merge this PR to publish the release."
           fi
 
+      - name: Summary
+        run: |
+          echo "## Release Preparation Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "* **Previous version:** ${{ steps.current_version.outputs.current }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "* **New version:** ${{ steps.version_bump.outputs.new_version }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "* **Version type:** ${{ inputs.version_type }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "* **Dry run:** ${{ inputs.dry_run }}" >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            echo "* **Status:** Dry run completed. No release PR was created." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "* **Status:** Release PR created. Merge it to publish the tag, GitHub Release, and npm package." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+  publish-release:
+    if: ${{ github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.12.4
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Get release version
+        id: release_version
+        run: |
+          VERSION=$(node -p "require('./packages/core/package.json').version")
+          TAG_NAME="v$VERSION"
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag_name=$TAG_NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Check release availability
+        id: release_check
+        run: |
+          TAG_NAME="${{ steps.release_version.outputs.tag_name }}"
+          VERSION="${{ steps.release_version.outputs.version }}"
+
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG_NAME" >/dev/null 2>&1; then
+            echo "should_release=false" >> "$GITHUB_OUTPUT"
+            echo "Tag $TAG_NAME already exists. Skipping release."
+            exit 0
+          fi
+
+          if npm view i18n-at@"$VERSION" version >/dev/null 2>&1; then
+            echo "should_release=false" >> "$GITHUB_OUTPUT"
+            echo "Version $VERSION already exists on npm. Skipping release."
+            exit 0
+          fi
+
+          echo "should_release=true" >> "$GITHUB_OUTPUT"
+          echo "Version $VERSION is ready to release."
+
+      - name: Create Git tag
+        if: ${{ steps.release_check.outputs.should_release == 'true' }}
+        run: |
+          TAG_NAME="${{ steps.release_version.outputs.tag_name }}"
+
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git tag -a "$TAG_NAME" -m "Release $TAG_NAME"
+          git push origin "refs/tags/$TAG_NAME"
+
+      - name: Create GitHub Release
+        if: ${{ steps.release_check.outputs.should_release == 'true' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG_NAME="${{ steps.release_version.outputs.tag_name }}"
+
+          gh release create "$TAG_NAME" \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "Release $TAG_NAME" \
+            --notes "Automated release for $TAG_NAME."
+
       - name: Publish to npm
-        if: ${{ !inputs.dry_run && steps.final_version_check.outputs.should_publish == 'true' }}
+        if: ${{ steps.release_check.outputs.should_release == 'true' }}
         run: |
           cd packages/core
           npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Skip publish (version exists)
-        if: ${{ !inputs.dry_run && steps.final_version_check.outputs.should_publish == 'false' }}
-        run: |
-          echo "⚠️ Skipping npm publish as version already exists."
-          echo "The Git tag and GitHub release will still be created."
-
       - name: Summary
         run: |
-          echo "## Release Summary" >> $GITHUB_STEP_SUMMARY
-          echo "* **Previous version:** ${{ steps.current_version.outputs.current }}" >> $GITHUB_STEP_SUMMARY
-          echo "* **New version:** ${{ steps.version_bump.outputs.new_version }}" >> $GITHUB_STEP_SUMMARY
-          echo "* **Version type:** ${{ inputs.version_type }}" >> $GITHUB_STEP_SUMMARY
-          echo "* **Dry run:** ${{ inputs.dry_run }}" >> $GITHUB_STEP_SUMMARY
+          echo "## Release Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "* **Version:** ${{ steps.release_version.outputs.version }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "* **Tag:** ${{ steps.release_version.outputs.tag_name }}" >> "$GITHUB_STEP_SUMMARY"
 
-          if [ "${{ inputs.dry_run }}" = "true" ]; then
-            echo "* **Status:** 🔍 Dry run completed - no changes made" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.release_check.outputs.should_release }}" = "true" ]; then
+            echo "* **Status:** Release completed successfully." >> "$GITHUB_STEP_SUMMARY"
+            echo "* **GitHub Release:** https://github.com/${{ github.repository }}/releases/tag/${{ steps.release_version.outputs.tag_name }}" >> "$GITHUB_STEP_SUMMARY"
+            echo "* **npm Package:** https://www.npmjs.com/package/i18n-at/v/${{ steps.release_version.outputs.version }}" >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "* **Status:** ✅ Release completed successfully" >> $GITHUB_STEP_SUMMARY
-            echo "* **GitHub Release:** [Release ${{ steps.version_bump.outputs.new_version }}](https://github.com/${{ github.repository }}/releases/tag/${{ steps.version_bump.outputs.new_version }})" >> $GITHUB_STEP_SUMMARY
-            echo "* **npm Package:** [i18n-at@${{ steps.version_bump.outputs.new_version }}](https://www.npmjs.com/package/i18n-at)" >> $GITHUB_STEP_SUMMARY
+            echo "* **Status:** Release skipped because the tag or npm version already exists." >> "$GITHUB_STEP_SUMMARY"
           fi
