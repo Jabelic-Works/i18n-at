@@ -17,6 +17,11 @@ on:
         required: false
         default: false
         type: boolean
+      publish_current_version:
+        description: "Publish the current package version on main"
+        required: false
+        default: false
+        type: boolean
   push:
     branches:
       - main
@@ -35,7 +40,7 @@ concurrency:
 
 jobs:
   prepare-release-pr:
-    if: ${{ github.event_name == 'workflow_dispatch' }}
+    if: ${{ github.event_name == 'workflow_dispatch' && !inputs.publish_current_version }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -188,7 +193,7 @@ jobs:
           fi
 
   publish-release:
-    if: ${{ github.event_name == 'push' }}
+    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.publish_current_version) }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -202,7 +207,10 @@ jobs:
         run: |
           SUBJECT=$(git log -1 --pretty=%s)
 
-          if [[ "$SUBJECT" =~ ^Merge\ pull\ request\ #[0-9]+\ from\ .*/release/v[0-9]+\.[0-9]+\.[0-9]+$ ]] || [[ "$SUBJECT" =~ ^chore:\ release\ v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "should_continue=true" >> "$GITHUB_OUTPUT"
+            echo "Manual publish requested for current version."
+          elif [[ "$SUBJECT" =~ ^Merge\ pull\ request\ #[0-9]+\ from\ .*/release/v[0-9]+\.[0-9]+\.[0-9]+$ ]] || [[ "$SUBJECT" =~ ^chore:\ release\ v[0-9]+\.[0-9]+\.[0-9]+$ ]] || [[ "$SUBJECT" =~ ^chore:\ bump\ version\ to\ v[0-9]+\.[0-9]+\.[0-9]+\ \(#[0-9]+\)$ ]]; then
             echo "should_continue=true" >> "$GITHUB_OUTPUT"
             echo "Release commit detected: $SUBJECT"
           else
