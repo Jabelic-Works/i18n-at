@@ -123,16 +123,24 @@ jobs:
 
       - name: Create release pull request
         if: ${{ !inputs.dry_run }}
+        id: release_pr
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG_NAME: ${{ steps.version_bump.outputs.new_version }}
         run: |
           BRANCH_NAME="release/$TAG_NAME"
+          PR_BODY="Bumps package versions for $TAG_NAME. Merge this PR to publish the release."
+          MANUAL_PR_URL="https://github.com/$GITHUB_REPOSITORY/compare/main...$BRANCH_NAME?quick_pull=1&title=chore:%20release%20$TAG_NAME"
 
           git checkout -b "$BRANCH_NAME"
           git add packages/core/package.json package.json
           git commit -m "chore: bump version to $TAG_NAME"
-          git push origin "$BRANCH_NAME"
+
+          if git ls-remote --exit-code --heads origin "$BRANCH_NAME" >/dev/null 2>&1; then
+            echo "Release branch already exists: $BRANCH_NAME"
+          else
+            git push origin "$BRANCH_NAME"
+          fi
 
           PR_NUMBER=$(gh pr list \
             --repo "$GITHUB_REPOSITORY" \
@@ -144,14 +152,21 @@ jobs:
             gh pr edit "$PR_NUMBER" \
               --repo "$GITHUB_REPOSITORY" \
               --title "chore: release $TAG_NAME" \
-              --body "Bumps package versions for $TAG_NAME. Merge this PR to publish the release."
+              --body "$PR_BODY"
+            echo "pr_url=https://github.com/$GITHUB_REPOSITORY/pull/$PR_NUMBER" >> "$GITHUB_OUTPUT"
           else
-            gh pr create \
+            if PR_URL=$(gh pr create \
               --repo "$GITHUB_REPOSITORY" \
               --base main \
               --head "$BRANCH_NAME" \
               --title "chore: release $TAG_NAME" \
-              --body "Bumps package versions for $TAG_NAME. Merge this PR to publish the release."
+              --body "$PR_BODY"); then
+              echo "pr_url=$PR_URL" >> "$GITHUB_OUTPUT"
+            else
+              echo "GitHub Actions is not permitted to create pull requests in this repository."
+              echo "Create the release PR manually: $MANUAL_PR_URL"
+              echo "manual_pr_url=$MANUAL_PR_URL" >> "$GITHUB_OUTPUT"
+            fi
           fi
 
       - name: Summary
@@ -164,8 +179,12 @@ jobs:
 
           if [ "${{ inputs.dry_run }}" = "true" ]; then
             echo "* **Status:** Dry run completed. No release PR was created." >> "$GITHUB_STEP_SUMMARY"
+          elif [ -n "${{ steps.release_pr.outputs.manual_pr_url }}" ]; then
+            echo "* **Status:** Release branch created. Manual PR creation is required because Actions cannot create PRs in this repository." >> "$GITHUB_STEP_SUMMARY"
+            echo "* **Release PR URL:** ${{ steps.release_pr.outputs.manual_pr_url }}" >> "$GITHUB_STEP_SUMMARY"
           else
             echo "* **Status:** Release PR created. Merge it to publish the tag, GitHub Release, and npm package." >> "$GITHUB_STEP_SUMMARY"
+            echo "* **Release PR URL:** ${{ steps.release_pr.outputs.pr_url }}" >> "$GITHUB_STEP_SUMMARY"
           fi
 
   publish-release:
