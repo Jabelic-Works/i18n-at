@@ -4,7 +4,7 @@ Co-location is easy to describe as a developer experience feature. The more impo
 
 ## The core claim
 
-When messages live near the component or route that owns them, teams spend less time synchronizing separate translation structures and more time reviewing the actual user-facing change.
+When messages live near the component or route that defines them, teams spend less time synchronizing separate translation structures and more time reviewing the actual user-facing change.
 
 That matters more as a codebase grows.
 
@@ -20,7 +20,7 @@ Unused messages are no longer hidden in large locale files. They stay close enou
 
 ### Review distance gets smaller
 
-A reviewer can inspect the component and its messages in one place. That reduces the chance of approving UI changes without noticing copy changes or parameter mismatches.
+The implementation and the user-facing text are reviewed together. A reviewer can inspect the component and its messages in one place. That reduces the chance of approving UI changes without noticing copy changes or parameter mismatches.
 
 ### IDE navigation becomes part of the workflow
 
