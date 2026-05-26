@@ -51,7 +51,7 @@
     "@vitest/ui": "4.1.6",
     "tsup": "^8.0.0",
     "typescript": "^5.0.0",
-    "vitest": "4.1.6"
+    "vitest": "4.1.7"
   },
   "repository": {
     "type": "git",
