@@ -10,6 +10,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -50,6 +52,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -82,8 +86,8 @@ jobs:
       - name: Check internal links
         working-directory: docs
         run: |
-          find . -name "*.md" -not -path "./node_modules/*" -not -path "./.vitepress/*" | \
-          xargs markdown-link-check --config .github/workflows/link-check-config.json || true
+          find . -name "*.md" -not -path "./node_modules/*" -not -path "./.vitepress/*" -print0 | \
+            xargs -0 -r markdown-link-check --config ../.github/workflows/link-check-config.json || true
 
       - name: Preview site
         working-directory: docs
