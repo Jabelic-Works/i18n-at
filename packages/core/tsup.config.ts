@@ -5,7 +5,6 @@ export default defineConfig([
   {
     entry: { server: "src/server-only.ts" },
     format: ["cjs", "esm"],
-    dts: true,
     clean: true,
     external: ["react"],
     treeshake: true,
@@ -17,7 +16,6 @@ export default defineConfig([
   {
     entry: { client: "src/client-only.ts" },
     format: ["cjs", "esm"],
-    dts: true,
     clean: false,
     external: ["react"],
     treeshake: true,
@@ -32,7 +30,6 @@ export default defineConfig([
   {
     entry: { index: "src/index.ts" },
     format: ["cjs", "esm"],
-    dts: true,
     clean: false,
     external: ["react"],
     treeshake: true,

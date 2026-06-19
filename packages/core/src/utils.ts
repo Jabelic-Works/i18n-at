@@ -1,4 +1,4 @@
-import { MessageNode } from "./types";
+import type { MessageNode } from "./types";
 import {
   DEFAULT_INTERPOLATION_FORMAT,
   type InterpolationFormat,

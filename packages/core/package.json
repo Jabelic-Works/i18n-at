@@ -24,7 +24,7 @@
     }
   },
   "scripts": {
-    "build": "tsup && node postbuild.js",
+    "build": "tsup && node scripts/build-dts.mjs && node postbuild.js",
     "dev": "tsup --watch",
     "test": "vitest",
     "typecheck": "tsc --noEmit"
@@ -49,6 +49,8 @@
   "devDependencies": {
     "@types/react": "^19.2.7",
     "@vitest/ui": "4.1.6",
+    "rollup": "^4.62.2",
+    "rollup-plugin-dts": "^6.4.1",
     "tsup": "^8.0.0",
     "typescript": "^6.0.3",
     "vitest": "4.1.6"
