@@ -48,6 +48,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -137,6 +138,7 @@ jobs:
           PR_BODY="Bumps package versions for $TAG_NAME. Merge this PR to publish the release."
           MANUAL_PR_URL="https://github.com/$GITHUB_REPOSITORY/compare/main...$BRANCH_NAME?quick_pull=1&title=chore:%20release%20$TAG_NAME"
 
+          gh auth setup-git
           git checkout -b "$BRANCH_NAME"
           git add packages/core/package.json package.json
           git commit -m "chore: bump version to $TAG_NAME"
@@ -176,21 +178,23 @@ jobs:
 
       - name: Summary
         run: |
-          echo "## Release Preparation Summary" >> "$GITHUB_STEP_SUMMARY"
-          echo "* **Previous version:** ${{ steps.current_version.outputs.current }}" >> "$GITHUB_STEP_SUMMARY"
-          echo "* **New version:** ${{ steps.version_bump.outputs.new_version }}" >> "$GITHUB_STEP_SUMMARY"
-          echo "* **Version type:** ${{ inputs.version_type }}" >> "$GITHUB_STEP_SUMMARY"
-          echo "* **Dry run:** ${{ inputs.dry_run }}" >> "$GITHUB_STEP_SUMMARY"
+          {
+            echo "## Release Preparation Summary"
+            echo "* **Previous version:** ${{ steps.current_version.outputs.current }}"
+            echo "* **New version:** ${{ steps.version_bump.outputs.new_version }}"
+            echo "* **Version type:** ${{ inputs.version_type }}"
+            echo "* **Dry run:** ${{ inputs.dry_run }}"
 
-          if [ "${{ inputs.dry_run }}" = "true" ]; then
-            echo "* **Status:** Dry run completed. No release PR was created." >> "$GITHUB_STEP_SUMMARY"
-          elif [ -n "${{ steps.release_pr.outputs.manual_pr_url }}" ]; then
-            echo "* **Status:** Release branch created. Manual PR creation is required because Actions cannot create PRs in this repository." >> "$GITHUB_STEP_SUMMARY"
-            echo "* **Release PR URL:** ${{ steps.release_pr.outputs.manual_pr_url }}" >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo "* **Status:** Release PR created. Merge it to publish the tag, GitHub Release, and npm package." >> "$GITHUB_STEP_SUMMARY"
-            echo "* **Release PR URL:** ${{ steps.release_pr.outputs.pr_url }}" >> "$GITHUB_STEP_SUMMARY"
-          fi
+            if [ "${{ inputs.dry_run }}" = "true" ]; then
+              echo "* **Status:** Dry run completed. No release PR was created."
+            elif [ -n "${{ steps.release_pr.outputs.manual_pr_url }}" ]; then
+              echo "* **Status:** Release branch created. Manual PR creation is required because Actions cannot create PRs in this repository."
+              echo "* **Release PR URL:** ${{ steps.release_pr.outputs.manual_pr_url }}"
+            else
+              echo "* **Status:** Release PR created. Merge it to publish the tag, GitHub Release, and npm package."
+              echo "* **Release PR URL:** ${{ steps.release_pr.outputs.pr_url }}"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
 
   publish-release:
     if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.publish_current_version) }}
@@ -201,6 +205,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Check release commit
         id: release_commit
@@ -258,6 +263,7 @@ jobs:
           TAG_NAME="${{ steps.release_version.outputs.tag_name }}"
           VERSION="${{ steps.release_version.outputs.version }}"
 
+          gh auth setup-git
           if git ls-remote --exit-code --tags origin "refs/tags/$TAG_NAME" >/dev/null 2>&1; then
             echo "tag_exists=true" >> "$GITHUB_OUTPUT"
             echo "Tag $TAG_NAME already exists. Reusing it."
@@ -283,9 +289,12 @@ jobs:
 
       - name: Create Git tag
         if: ${{ steps.release_check.outputs.should_publish == 'true' && steps.release_check.outputs.tag_exists != 'true' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG_NAME="${{ steps.release_version.outputs.tag_name }}"
 
+          gh auth setup-git
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git tag -a "$TAG_NAME" -m "Release $TAG_NAME"
@@ -313,18 +322,20 @@ jobs:
 
       - name: Summary
         run: |
-          echo "## Release Summary" >> "$GITHUB_STEP_SUMMARY"
+          {
+            echo "## Release Summary"
 
-          if [ "${{ steps.release_commit.outputs.should_continue }}" != "true" ]; then
-            echo "* **Status:** Publish skipped because this push is not a release merge." >> "$GITHUB_STEP_SUMMARY"
-          elif [ "${{ steps.release_check.outputs.should_publish }}" = "true" ]; then
-            echo "* **Version:** ${{ steps.release_version.outputs.version }}" >> "$GITHUB_STEP_SUMMARY"
-            echo "* **Tag:** ${{ steps.release_version.outputs.tag_name }}" >> "$GITHUB_STEP_SUMMARY"
-            echo "* **Status:** Release completed successfully." >> "$GITHUB_STEP_SUMMARY"
-            echo "* **GitHub Release:** https://github.com/${{ github.repository }}/releases/tag/${{ steps.release_version.outputs.tag_name }}" >> "$GITHUB_STEP_SUMMARY"
-            echo "* **npm Package:** https://www.npmjs.com/package/i18n-at/v/${{ steps.release_version.outputs.version }}" >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo "* **Version:** ${{ steps.release_version.outputs.version }}" >> "$GITHUB_STEP_SUMMARY"
-            echo "* **Tag:** ${{ steps.release_version.outputs.tag_name }}" >> "$GITHUB_STEP_SUMMARY"
-            echo "* **Status:** Release skipped because the npm version already exists." >> "$GITHUB_STEP_SUMMARY"
-          fi
+            if [ "${{ steps.release_commit.outputs.should_continue }}" != "true" ]; then
+              echo "* **Status:** Publish skipped because this push is not a release merge."
+            elif [ "${{ steps.release_check.outputs.should_publish }}" = "true" ]; then
+              echo "* **Version:** ${{ steps.release_version.outputs.version }}"
+              echo "* **Tag:** ${{ steps.release_version.outputs.tag_name }}"
+              echo "* **Status:** Release completed successfully."
+              echo "* **GitHub Release:** https://github.com/${{ github.repository }}/releases/tag/${{ steps.release_version.outputs.tag_name }}"
+              echo "* **npm Package:** https://www.npmjs.com/package/i18n-at/v/${{ steps.release_version.outputs.version }}"
+            else
+              echo "* **Version:** ${{ steps.release_version.outputs.version }}"
+              echo "* **Tag:** ${{ steps.release_version.outputs.tag_name }}"
+              echo "* **Status:** Release skipped because the npm version already exists."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
