@@ -1,17 +1,20 @@
 import { at } from "i18n-at";
-import { messages, type AppLocale } from "@/messages";
+import { isAppLocale, messages } from "@/messages";
 import Dashboard from "@/components/Dashboard";
 import Navigation from "@/components/Navigation";
 import { I18nClientProvider } from "i18n-at/client";
 import { getI18n } from "i18n-at/server";
 import { i18nConfig } from "../../../i18nconfig";
+import { notFound } from "next/navigation";
 
 export default async function Page({
   params,
 }: {
-  params: Promise<{ locale: AppLocale }>;
+  params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  if (!isAppLocale(locale)) notFound();
+
   const { t, m } = getI18n(messages, locale, i18nConfig.interpolationFormat);
 
   return (

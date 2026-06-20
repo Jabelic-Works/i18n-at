@@ -1,6 +1,6 @@
 "use client";
 import { useContext } from "react";
-import { MessageNode, Messages } from "./types";
+import type { MessageNode, Messages } from "./types";
 import { getValueFromPath, interpolateMessage } from "./utils";
 import {
   DEFAULT_INTERPOLATION_FORMAT,
