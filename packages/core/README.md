@@ -2,6 +2,8 @@
 
 🌍 **Type-safe internationalization for React and Next.js with co-location and IDE code jumping**
 
+[View i18n-at on npm](https://www.npmjs.com/package/i18n-at)
+
 ## ✨ Features
 
 - 🏗️ **Co-location First** - Define messages right where they're used
