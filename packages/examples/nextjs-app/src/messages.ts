@@ -53,3 +53,7 @@ export const { messages } = defineMessages({
 });
 
 export type AppLocale = keyof typeof messages;
+
+export function isAppLocale(locale: string): locale is AppLocale {
+  return Object.prototype.hasOwnProperty.call(messages, locale);
+}

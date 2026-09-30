@@ -1,10 +1,6 @@
 import { I18nClientProvider } from "i18n-at/client";
-import { messages, type AppLocale } from "@/messages";
+import { isAppLocale } from "@/messages";
 import { notFound } from "next/navigation";
-
-function isAppLocale(locale: string): locale is AppLocale {
-  return Object.prototype.hasOwnProperty.call(messages, locale);
-}
 
 export default async function LocaleLayout({
   children,

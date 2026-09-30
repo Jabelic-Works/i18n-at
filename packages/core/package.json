@@ -1,6 +1,6 @@
 {
   "name": "i18n-at",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "description": "Type-safe internationalization tool for Next.js App Router with co-location and IDE code jumping",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -24,8 +24,8 @@
     }
   },
   "scripts": {
-    "build": "tsup && node postbuild.js",
-    "dev": "tsup --watch",
+    "build": "tsdown",
+    "dev": "tsdown --watch",
     "test": "vitest",
     "typecheck": "tsc --noEmit"
   },
@@ -48,10 +48,10 @@
   },
   "devDependencies": {
     "@types/react": "^19.2.7",
-    "@vitest/ui": "^4.0.15",
-    "tsup": "^8.0.0",
-    "typescript": "^5.0.0",
-    "vitest": "4.0.15"
+    "@vitest/ui": "4.1.9",
+    "tsdown": "^0.21.10",
+    "typescript": "^6.0.3",
+    "vitest": "4.1.10"
   },
   "repository": {
     "type": "git",
