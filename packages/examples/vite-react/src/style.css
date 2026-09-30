@@ -1,0 +1,66 @@
+:root {
+  font-family: system-ui, sans-serif;
+  color: #14213d;
+  background: #f4f7fb;
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  max-width: 680px;
+  margin: 12vh auto;
+  padding: 0 24px;
+}
+
+nav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+button {
+  padding: 10px 16px;
+  border: 1px solid #9aaaca;
+  border-radius: 8px;
+  background: white;
+  color: inherit;
+  cursor: pointer;
+}
+
+button[aria-pressed="true"] {
+  border-color: #254fba;
+  background: #254fba;
+  color: white;
+}
+
+.card {
+  padding: 32px;
+  border: 1px solid #d8e0ef;
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 12px 36px #14213d14;
+}
+
+.eyebrow {
+  color: #345fc5;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 8px 0 24px;
+}
+
+.greeting {
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.locale {
+  margin-top: 32px;
+  color: #53627e;
+}

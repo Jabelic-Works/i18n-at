@@ -1,6 +1,6 @@
 # i18n-at
 
-🌍 **Type-safe internationalization tool for Next.js App Router with co-location and IDE code jumping**
+🌍 **Type-safe internationalization for React and Next.js with co-location and IDE code jumping**
 
 ## ✨ Features
 
@@ -18,21 +18,22 @@ npm install i18n-at
 
 ### Basic Usage
 
-```typescript
+```tsx
 // Define messages right where you use them
-import { defineMessages, useI18n } from "i18n-at";
+import { defineMessages } from "i18n-at";
+import { I18nClientProvider, useI18n } from "i18n-at/client";
 
 const { messages } = defineMessages({
   en: {
     dashboard: {
       title: "Dashboard",
-      welcome: "Welcome, {$name}!",
+      welcome: "Welcome, {name}!",
     },
   },
   ja: {
     dashboard: {
       title: "ダッシュボード",
-      welcome: "{$name} さん、ようこそ！",
+      welcome: "{name} さん、ようこそ！",
     },
   },
 });
@@ -47,7 +48,20 @@ function Dashboard() {
     </div>
   );
 }
+
+function App() {
+  return (
+    <I18nClientProvider locale="en">
+      <Dashboard />
+    </I18nClientProvider>
+  );
+}
 ```
+
+## Examples
+
+- [Vite + React](../examples/vite-react/README.md): client-rendered React with a language switcher
+- [Next.js App Router](../examples/nextjs-app/README.md): server and client components
 
 ## 📖 Documentation
 
