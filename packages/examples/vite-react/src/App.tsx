@@ -1,66 +1,74 @@
-import { useState } from "react";
-import { defineMessages } from "i18n-at";
-import { I18nClientProvider, useI18n, useLocale } from "i18n-at/client";
+import { I18nClientProvider, useI18n } from "i18n-at/client";
+import Dashboard from "./Dashboard";
+import Navigation from "./Navigation";
+import { isAppLocale, messages, type AppLocale } from "./messages";
 
-// Keep messages beside the component that uses them.
-const { messages } = defineMessages({
-  en: {
-    title: "React works here, too",
-    welcome: "Welcome, {name}!",
-    description: "Switch languages without a router or server component.",
-    currentLocale: "Current locale",
-  },
-  ja: {
-    title: "React でも使えます",
-    welcome: "{name} さん、ようこそ！",
-    description: "ルーターや Server Component なしで言語を切り替えられます。",
-    currentLocale: "現在の言語",
-  },
-});
+const requestedLocale = new URLSearchParams(window.location.search).get("locale");
+const locale: AppLocale =
+  requestedLocale && isAppLocale(requestedLocale) ? requestedLocale : "en-US";
 
-type Locale = keyof typeof messages;
-
-function Welcome() {
-  const locale = useLocale<Locale>();
+function PageContent() {
   const { t, m } = useI18n(messages);
 
   return (
-    <section className="card">
-      <p className="eyebrow">i18n-at / Vite + React</p>
-      <h1>{t(m.title)}</h1>
-      <p className="greeting">{t(m.welcome, { name: "React" })}</p>
-      <p>{t(m.description)}</p>
-      <p className="locale">
-        {t(m.currentLocale)}: <code>{locale}</code>
-      </p>
-    </section>
+    <div lang={locale} className="min-h-screen bg-gray-50">
+      <Navigation locale={locale} />
+
+      <main className="mx-auto max-w-4xl p-6">
+        <div className="rounded-lg bg-white p-8 shadow-md">
+          <h1 className="mb-4 text-3xl font-bold text-gray-900">
+            {t(m.dashboard.title)}
+          </h1>
+
+          <p className="mb-8 text-lg text-gray-700">
+            {t(m.dashboard.welcome, { name: "Developer" })}
+          </p>
+
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            <div className="rounded-lg bg-blue-50 p-6">
+              <h2 className="mb-2 text-xl font-semibold text-blue-900">
+                {t(m.features.colocation.title)}
+              </h2>
+              <p className="text-blue-700">
+                {t(m.features.colocation.description)}
+              </p>
+            </div>
+
+            <div className="rounded-lg bg-green-50 p-6">
+              <h2 className="mb-2 text-xl font-semibold text-green-900">
+                {t(m.features.typeSafety.title)}
+              </h2>
+              <p className="text-green-700">
+                {t(m.features.typeSafety.description)}
+              </p>
+            </div>
+
+            <div className="rounded-lg bg-purple-50 p-6">
+              <h2 className="mb-2 text-xl font-semibold text-purple-900">
+                {t(m.features.react.title)}
+              </h2>
+              <p className="text-purple-700">
+                {t(m.features.react.description)}
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-12">
+            <h2 className="mb-6 text-2xl font-bold text-gray-900">
+              {t(m.example.heading)}
+            </h2>
+            <Dashboard />
+          </div>
+        </div>
+      </main>
+    </div>
   );
 }
 
 export default function App() {
-  const [locale, setLocale] = useState<Locale>("en");
-
   return (
     <I18nClientProvider locale={locale}>
-      <main>
-        <nav aria-label="Language">
-          <button
-            type="button"
-            aria-pressed={locale === "en"}
-            onClick={() => setLocale("en")}
-          >
-            English
-          </button>
-          <button
-            type="button"
-            aria-pressed={locale === "ja"}
-            onClick={() => setLocale("ja")}
-          >
-            日本語
-          </button>
-        </nav>
-        <Welcome />
-      </main>
+      <PageContent />
     </I18nClientProvider>
   );
 }

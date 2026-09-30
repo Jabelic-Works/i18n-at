@@ -1,6 +1,8 @@
 # i18n-at Example App
 
-This is a Next.js App Router example demonstrating the usage of `i18n-at` library for type-safe internationalization with co-location.
+This is a Next.js App Router example demonstrating `i18n-at`. It shows the same
+dashboard and interactions as the [Vite + React example](../vite-react/README.md).
+The navigation badge identifies the Next.js App Router runtime.
 
 ## Features Demonstrated
 
@@ -19,7 +21,7 @@ src/
 │   │   ├── layout.tsx    # I18nClientProvider setup
 │   │   └── page.tsx      # Server component with i18n
 │   ├── globals.css
-│   └── layout.tsx        # Root layout with locale redirect
+│   └── layout.tsx        # Root HTML layout
 ├── components/
 │   ├── Dashboard.tsx     # Client component example
 │   └── Navigation.tsx    # Server component navigation
@@ -33,13 +35,13 @@ src/
 ```typescript
 // src/messages.ts
 export const { messages } = defineMessages({
-  en: {
+  "en-US": {
     dashboard: {
       title: "Dashboard",
       welcome: "Welcome, {name}!",
     },
   },
-  ja: {
+  "ja-JP": {
     dashboard: {
       title: "ダッシュボード",
       welcome: "{name} さん、ようこそ！",
@@ -52,8 +54,7 @@ export const { messages } = defineMessages({
 
 ```typescript
 // app/[locale]/page.tsx
-const t = getI18n(messages, locale);
-const m = at(locale, messages); // ← Type-safe & IDE jumping!
+const { t, m } = getI18n(messages, locale);
 return <h1>{t(m.dashboard.title)}</h1>;
 ```
 
@@ -62,9 +63,9 @@ return <h1>{t(m.dashboard.title)}</h1>;
 ```typescript
 // components/Dashboard.tsx
 "use client";
-const { t } = useI18n(messages);
+const { t, m } = useI18n(messages);
 const locale = useLocale();
-const m = at(locale, messages); // ← IDE jumping works!
+return <h2>{t(m.dashboard.title)} ({locale})</h2>;
 ```
 
 ## Development
@@ -73,20 +74,21 @@ const m = at(locale, messages); // ← IDE jumping works!
 # Install dependencies
 pnpm install
 
-# Start development server
-pnpm dev
+# Start the Next.js example
+pnpm --dir packages/examples/nextjs-app dev
 
-# Build for production
-pnpm build
+# Build core and the Next.js example
+pnpm --dir packages/core build
+pnpm --dir packages/examples/nextjs-app build
 ```
 
 ## Testing Languages
 
 Visit these URLs to test different locales:
 
-- English: http://localhost:3000/en
-- Japanese: http://localhost:3000/ja
-- Chinese: http://localhost:3000/zh
+- English: http://localhost:3000/en-US
+- Japanese: http://localhost:3000/ja-JP
+- Chinese: http://localhost:3000/zh-CN
 
 ## Key Benefits Shown
 

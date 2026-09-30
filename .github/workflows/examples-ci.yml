@@ -57,6 +57,9 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Keep example messages aligned
+        run: cmp packages/examples/nextjs-app/src/messages.ts packages/examples/vite-react/src/messages.ts
+
       - name: Install pnpm
         uses: pnpm/action-setup@v6
         with:

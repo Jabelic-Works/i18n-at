@@ -1,12 +1,10 @@
-"use client";
-import { useI18n, useLocale } from "i18n-at/client";
-import { AppLocale, messages } from "@/messages";
 import { useState } from "react";
-import { i18nConfig } from "../../i18nconfig";
+import { useI18n, useLocale } from "i18n-at/client";
+import { messages, type AppLocale } from "./messages";
 
 export default function Dashboard() {
   const locale = useLocale<AppLocale>();
-  const { t, m } = useI18n(messages, i18nConfig.interpolationFormat);
+  const { t, m } = useI18n(messages);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSave = () => {
@@ -15,12 +13,12 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border border-blue-200">
-      <h3 className="text-xl font-semibold text-blue-900 mb-4">
-          {t(m.dashboard.title)} - {t(m.example.component)}
+    <div className="rounded-lg border border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 p-6">
+      <h3 className="mb-4 text-xl font-semibold text-blue-900">
+        {t(m.dashboard.title)} - {t(m.example.component)}
       </h3>
 
-      <p className="text-blue-700 mb-6">
+      <p className="mb-6 text-blue-700">
         {t(m.dashboard.welcome, { name: "Client User" })}
       </p>
 
@@ -43,13 +41,12 @@ export default function Dashboard() {
           </button>
         </div>
 
-        <div className="mt-6 p-4 bg-white rounded-md border">
-          <h4 className="font-medium text-gray-900 mb-2">
-            {t(m.example.currentLocale)} <span className="text-blue-600">{locale}</span>
+        <div className="mt-6 rounded-md border border-gray-200 bg-white p-4">
+          <h4 className="mb-2 font-medium text-gray-900">
+            {t(m.example.currentLocale)}{" "}
+            <span className="text-blue-600">{locale}</span>
           </h4>
-          <p className="text-sm text-gray-600">
-            {t(m.example.hint)}
-          </p>
+          <p className="text-sm text-gray-600">{t(m.example.hint)}</p>
         </div>
       </div>
     </div>
