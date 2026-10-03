@@ -38,6 +38,10 @@ jobs:
         working-directory: packages/core
         run: pnpm run build
 
+      - name: Lint Next.js example
+        working-directory: packages/examples/nextjs-app
+        run: pnpm run lint
+
       - name: Build Next.js example
         working-directory: packages/examples/nextjs-app
         run: pnpm run build
