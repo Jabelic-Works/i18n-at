@@ -47,3 +47,39 @@ jobs:
         run: |
           test -d .next
           test -f .next/BUILD_ID
+
+  vite-react:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Keep example messages aligned
+        run: cmp packages/examples/nextjs-app/src/messages.ts packages/examples/vite-react/src/messages.ts
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 10.12.4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build core package
+        working-directory: packages/core
+        run: pnpm run build
+
+      - name: Build Vite + React example
+        working-directory: packages/examples/vite-react
+        run: pnpm run build
+
+      - name: Check Vite build output
+        run: test -f packages/examples/vite-react/dist/index.html
