@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { I18nClientProvider, useI18n } from "i18n-at/client";
 import Dashboard from "./Dashboard";
 import Navigation from "./Navigation";
@@ -66,6 +67,10 @@ function PageContent() {
 }
 
 export default function App() {
+  useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
+
   return (
     <I18nClientProvider locale={locale}>
       <PageContent />
