@@ -1,0 +1,25 @@
+{
+  "name": "vite-react-example",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "i18n-at": "workspace:*",
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@tailwindcss/vite": "4.3.2",
+    "@vitejs/plugin-react": "5.1.4",
+    "tailwindcss": "4.3.2",
+    "typescript": "^5.9.2",
+    "vite": "7.3.1"
+  }
+}
