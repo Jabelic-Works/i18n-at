@@ -11,8 +11,6 @@ jobs:
     strategy:
       matrix:
         include:
-          - node-major: 20
-            node-version: "20.20.2"
           - node-major: 22
             node-version: "22.23.5"
           - node-major: 24
