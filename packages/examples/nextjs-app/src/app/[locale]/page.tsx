@@ -1,4 +1,3 @@
-import { at } from "i18n-at";
 import { isAppLocale, messages } from "@/messages";
 import Dashboard from "@/components/Dashboard";
 import Navigation from "@/components/Navigation";
@@ -18,7 +17,7 @@ export default async function Page({
   const { t, m } = getI18n(messages, locale, i18nConfig.interpolationFormat);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div lang={locale} className="min-h-screen bg-gray-50">
       <Navigation locale={locale} />
 
       <main className="max-w-4xl mx-auto p-6">
@@ -34,36 +33,35 @@ export default async function Page({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-blue-50 p-6 rounded-lg">
               <h2 className="text-xl font-semibold text-blue-900 mb-2">
-                Co-location Demo
+                {t(m.features.colocation.title)}
               </h2>
               <p className="text-blue-700">
-                Messages are defined right where they&apos;re used for easy
-                maintenance.
+                {t(m.features.colocation.description)}
               </p>
             </div>
 
             <div className="bg-green-50 p-6 rounded-lg">
               <h2 className="text-xl font-semibold text-green-900 mb-2">
-                Type Safety
+                {t(m.features.typeSafety.title)}
               </h2>
               <p className="text-green-700">
-                Full TypeScript support with IDE code jumping.
+                {t(m.features.typeSafety.description)}
               </p>
             </div>
 
             <div className="bg-purple-50 p-6 rounded-lg">
               <h2 className="text-xl font-semibold text-purple-900 mb-2">
-                Next.js Ready
+                {t(m.features.react.title)}
               </h2>
               <p className="text-purple-700">
-                Works with both server and client components.
+                {t(m.features.react.description)}
               </p>
             </div>
           </div>
 
           <div className="mt-12">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Client Component Example
+              {t(m.example.heading)}
             </h2>
             <I18nClientProvider locale={locale}>
               <Dashboard />
