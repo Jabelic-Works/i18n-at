@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "i18n-at": "workspace:*",
-    "next": "16.2.10",
+    "next": "16.4.2",
     "react": "19.2.7",
     "react-dom": "19.2.7"
   },
@@ -22,9 +22,9 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "eslint": "^10.6.0",
-    "eslint-config-next": "16.2.10",
+    "eslint-config-next": "16.4.2",
     "tailwindcss": "^4",
-    "typescript": "^7",
+    "typescript": "^5",
     "typescript-eslint": "8.71.0"
   }
 }
