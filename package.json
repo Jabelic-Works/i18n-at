@@ -19,7 +19,7 @@
     "release:prepare": "pnpm build && pnpm version:dry-run"
   },
   "devDependencies": {
-    "typescript": "^5.0.0",
+    "typescript": "^7.0.2",
     "vitepress": "^1.6.4",
     "wrangler": "^4.93.1"
   },
